@@ -2,9 +2,7 @@ import "../config/loadEnv.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import bcrypt from "bcryptjs";
 import { isDbConnected } from "../config/db.js";
-import { User } from "../models/User.js";
 import { Project } from "../models/Project.js";
 import { Testimonial } from "../models/Testimonial.js";
 import { SiteContent } from "../models/SiteContent.js";
@@ -57,7 +55,6 @@ function flattenToDottedSet(patch, prefix = "", out = {}) {
 }
 
 let localStore = {
-  users: [],
   content: null,
   draftContent: null,
   projects: [],
@@ -102,7 +99,6 @@ export function saveLocalStore() {
 
 function initializeLocalStore() {
   localStore = {
-    users: [],
     content: {
       company: defaultCompany,
       ...pageContentDefaults,
@@ -127,62 +123,18 @@ function initializeLocalStore() {
   saveLocalStore();
 }
 
-// Bootstrap Owner User and seed DB if connected
+// Bootstrap CMS data — seeds MongoDB collections on first run.
+// Owner authentication is handled separately via environment variables (see backend/middleware/auth.js).
 export async function bootstrapSystem() {
   loadLocalStore();
 
-  const ownerEmail = (process.env.OWNER_EMAIL || "constructionskks@gmail.com").toLowerCase().trim();
-  const ownerUsername = (process.env.OWNER_USERNAME || ownerEmail.split("@")[0]).toLowerCase().trim();
-  const initialPassword = process.env.OWNER_INITIAL_PASSWORD || (
-    process.env.NODE_ENV === "production" ? "" : "kks123"
-  );
-  if (!initialPassword) {
-    throw new Error("OWNER_INITIAL_PASSWORD must be configured before bootstrap.");
-  }
-
-  // Bootstrap in local store
-  let localOwner = localStore.users.find(
-    (u) => u.username === ownerUsername || u.email === ownerEmail
-  );
-  if (!localOwner) {
-    const salt = bcrypt.genSaltSync(10);
-    const passwordHash = bcrypt.hashSync(initialPassword, salt);
-    localOwner = {
-      _id: `user_${Date.now()}`,
-      username: ownerUsername,
-      email: ownerEmail,
-      password: passwordHash,
-      role: "owner",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    localStore.users.push(localOwner);
-    saveLocalStore();
-    console.log(` Seeded owner account in local store: ${ownerUsername} (${ownerEmail})`);
-  }
-
-  // If MongoDB URI is configured, ensure DB is connected and seeded
+  // If MongoDB URI is configured, ensure DB is connected and seed CMS data
   if (process.env.MONGODB_URI) {
     if (!isDbConnected()) {
       throw new Error("MongoDB Atlas is configured but not connected during system bootstrap.");
     }
 
     try {
-      const existingUser = await User.findOne({
-        $or: [{ username: ownerUsername }, { email: ownerEmail }],
-      });
-      if (!existingUser) {
-        const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(initialPassword, salt);
-        await User.create({
-          username: ownerUsername,
-          email: ownerEmail,
-          password: passwordHash,
-          role: "owner",
-        });
-        console.log(` Seeded owner account in MongoDB: ${ownerUsername} (${ownerEmail})`);
-      }
-
       const contentCount = await SiteContent.countDocuments();
       if (contentCount === 0) {
         await SiteContent.create({
@@ -726,47 +678,3 @@ export async function getEnquiries({ status } = {}) {
   return [];
 }
 
-// User Lookups
-export async function findUserByLogin(identifier) {
-  const clean = identifier.toLowerCase().trim();
-  if (process.env.MONGODB_URI) {
-    if (!isDbConnected()) {
-      throw new Error("MongoDB Atlas is configured but not connected. Unable to verify user.");
-    }
-    try {
-      const user = await User.findOne({
-        $or: [{ username: clean }, { email: clean }],
-      });
-      return user || null;
-    } catch (err) {
-      console.error("❌ Failed to find user in MongoDB:", err.message);
-      throw new Error(`Database query failed for user authentication: ${err.message}`);
-    }
-  }
-  return localStore.users.find((u) => u.username === clean || u.email === clean) || null;
-}
-
-export async function updateUserPassword(userId, newPasswordHash) {
-  if (process.env.MONGODB_URI) {
-    if (!isDbConnected()) {
-      throw new Error("MongoDB Atlas is configured but not connected. Unable to update password.");
-    }
-    try {
-      await User.findByIdAndUpdate(userId, {
-        $set: { password: newPasswordHash, updatedAt: new Date() },
-      });
-    } catch (err) {
-      console.error("❌ Failed to update password in MongoDB:", err.message);
-      throw new Error(`Database update failed for user password: ${err.message}`);
-    }
-  }
-  const u = localStore.users.find(
-    (user) => user._id === userId || user._id.toString() === userId.toString()
-  );
-  if (u) {
-    u.password = newPasswordHash;
-    u.updatedAt = new Date().toISOString();
-    saveLocalStore();
-  }
-  return true;
-}

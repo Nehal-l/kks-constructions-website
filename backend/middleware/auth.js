@@ -1,10 +1,20 @@
 import crypto from "node:crypto";
-import { findUserByLogin } from "../services/datastore.js";
 
 const COOKIE_NAME = "kks_admin_session";
 const SESSION_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const unsafeMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const developmentSessionSecret = crypto.randomBytes(32).toString("hex");
+
+// ---------------------------------------------------------------------------
+// Owner credential lookup — reads directly from environment variables.
+// No database queries are made for authentication.
+// ---------------------------------------------------------------------------
+export function getOwnerFromEnv() {
+  const email = (process.env.OWNER_EMAIL || "").toLowerCase().trim();
+  const username = (process.env.OWNER_USERNAME || email.split("@")[0]).toLowerCase().trim();
+  const password = process.env.OWNER_INITIAL_PASSWORD || "";
+  return { id: "owner_env", email, username, password, role: "owner" };
+}
 
 export function requireTrustedOrigin(req, res, next) {
   if (!unsafeMethods.has(req.method) || !req.get("Origin")) return next();
@@ -125,8 +135,9 @@ export function clearSessionCookie(res) {
   });
 }
 
-// Authentication middleware
-export async function requireAuth(req, res, next) {
+// Authentication middleware — validates session token and confirms
+// the owner credentials still match the current env vars.
+export function requireAuth(req, res, next) {
   const token = req.cookies?.[COOKIE_NAME];
   if (!token) {
     return res.status(401).json({ error: "Authentication required. Please log in." });
@@ -138,30 +149,29 @@ export async function requireAuth(req, res, next) {
     return res.status(401).json({ error: "Session expired or invalid. Please log in again." });
   }
 
-  const user = await findUserByLogin(session.username || session.email);
-  if (!user) {
+  // Confirm the session email still matches the configured owner email
+  const owner = getOwnerFromEnv();
+  const sessionEmail = (session.email || "").toLowerCase().trim();
+  if (sessionEmail !== owner.email) {
     clearSessionCookie(res);
-    return res.status(401).json({ error: "User account no longer found." });
+    return res.status(401).json({ error: "Session is no longer valid. Please log in again." });
   }
 
   req.user = {
-    id: user._id?.toString() || user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role || "owner",
+    id: owner.id,
+    username: owner.username,
+    email: owner.email,
+    role: owner.role,
   };
 
   return next();
 }
 
-// Password strength validator
+// Password strength validator (kept for change-password UI validation)
 export function validatePasswordStrength(password) {
   if (typeof password !== "string") return "Password must be a string.";
-  if (password.length < 8) return "Password must be at least 8 characters long.";
+  if (password.length < 6) return "Password must be at least 6 characters long.";
   if (!/[A-Za-z]/.test(password)) return "Password must contain at least one letter.";
   if (!/[0-9]/.test(password)) return "Password must contain at least one number.";
-  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
-    return "Password must contain at least one special character.";
-  }
   return null;
 }

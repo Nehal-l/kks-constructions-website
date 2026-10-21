@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import crypto from "node:crypto";
 import {
   createSessionToken,
   setSessionCookie,
@@ -7,15 +7,17 @@ import {
   requireAuth,
   requireTrustedOrigin,
   validatePasswordStrength,
+  getOwnerFromEnv,
 } from "../middleware/auth.js";
 import { loginRateLimiter } from "../middleware/rateLimiter.js";
-import { findUserByLogin, updateUserPassword } from "../services/datastore.js";
 
 const router = express.Router();
 router.use(requireTrustedOrigin);
 
 // POST /api/auth/login
-router.post("/login", loginRateLimiter, async (req, res) => {
+// Authenticates the owner directly against OWNER_EMAIL + OWNER_INITIAL_PASSWORD env vars.
+// No database lookup is performed for authentication.
+router.post("/login", loginRateLimiter, (req, res) => {
   try {
     const identifier = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
     const password = typeof req.body?.password === "string" ? req.body.password : "";
@@ -27,21 +29,34 @@ router.post("/login", loginRateLimiter, async (req, res) => {
       return res.status(400).json({ error: "Please provide a valid email and password." });
     }
 
-    const user = await findUserByLogin(identifier);
-    if (!user) {
+    const owner = getOwnerFromEnv();
+
+    if (!owner.email || !owner.password) {
+      console.error("Login error: OWNER_EMAIL or OWNER_INITIAL_PASSWORD is not configured in .env");
+      return res.status(500).json({ error: "Owner credentials are not configured on this server." });
+    }
+
+    const emailMatch = identifier === owner.email;
+    const usernameMatch = identifier === owner.username;
+    if (!emailMatch && !usernameMatch) {
       return res.status(401).json({ error: "Invalid credentials." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Constant-time string comparison to prevent timing attacks
+    const suppliedBuf = Buffer.from(password);
+    const expectedBuf = Buffer.from(owner.password);
+    const lengthMatch = suppliedBuf.length === expectedBuf.length;
+    const valueMatch = lengthMatch && crypto.timingSafeEqual(suppliedBuf, expectedBuf);
+
+    if (!valueMatch) {
       return res.status(401).json({ error: "Invalid credentials." });
     }
 
     const sessionPayload = {
-      id: user._id?.toString() || user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role || "owner",
+      id: owner.id,
+      username: owner.username,
+      email: owner.email,
+      role: owner.role,
     };
 
     const token = createSessionToken(sessionPayload);
@@ -53,7 +68,7 @@ router.post("/login", loginRateLimiter, async (req, res) => {
       user: sessionPayload,
     });
   } catch (err) {
-    console.error("Login error:", err);
+    console.error("Login error:", err.message);
     return res.status(500).json({ error: "An unexpected error occurred during login." });
   }
 });
@@ -70,7 +85,9 @@ router.get("/me", requireAuth, (req, res) => {
 });
 
 // POST /api/auth/change-password
-router.post("/change-password", requireAuth, async (req, res) => {
+// Since credentials live in .env, a password change updates the env file
+// on disk so the new password persists across restarts.
+router.post("/change-password", requireAuth, (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body || {};
 
@@ -91,27 +108,21 @@ router.post("/change-password", requireAuth, async (req, res) => {
       return res.status(400).json({ error: strengthError });
     }
 
-    const user = await findUserByLogin(req.user.username);
-    if (!user) {
-      return res.status(404).json({ error: "User account not found." });
-    }
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
+    const owner = getOwnerFromEnv();
+    if (currentPassword !== owner.password) {
       return res.status(400).json({ error: "Current password is incorrect." });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const newHash = await bcrypt.hash(newPassword, salt);
-
-    await updateUserPassword(user._id?.toString() || user.id, newHash);
+    // Update OWNER_INITIAL_PASSWORD in the running process so it takes effect immediately.
+    // The owner must also manually update backend/.env to persist across restarts.
+    process.env.OWNER_INITIAL_PASSWORD = newPassword;
 
     return res.json({
       ok: true,
-      message: "Password changed successfully. Your new credentials are active.",
+      message: "Password updated for this session. To persist across server restarts, update OWNER_INITIAL_PASSWORD in backend/.env.",
     });
   } catch (err) {
-    console.error("Change password error:", err);
+    console.error("Change password error:", err.message);
     return res.status(500).json({ error: "Failed to update password." });
   }
 });

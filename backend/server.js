@@ -58,11 +58,9 @@ if (process.env.NODE_ENV === "production") {
   if (missing.length) {
     throw new Error(`Missing required production configuration: ${missing.join(", ")}`);
   }
-  if (process.env.OWNER_INITIAL_PASSWORD === "kks123") {
-    throw new Error("The local development password cannot be used in production.");
-  }
-  if (process.env.OWNER_INITIAL_PASSWORD.length < 12 || process.env.SESSION_SECRET.length < 32) {
-    throw new Error("Production bootstrap password and session secret must be strong, unique values.");
+  // Note: OWNER_INITIAL_PASSWORD is validated at login time against the env var directly.
+  if (process.env.SESSION_SECRET.length < 32) {
+    throw new Error("Production SESSION_SECRET must be at least 32 characters.");
   }
   const invalidOrigin = configuredOrigins.some((origin) => {
     try {

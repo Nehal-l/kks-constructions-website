@@ -439,54 +439,6 @@
       "updatedAt": "2026-10-21T11:01:50.959Z"
     },
     {
-      "slug": "north-atelier",
-      "name": "North Atelier",
-      "status": "upcoming",
-      "type": "Residential",
-      "location": "Hebbal Lakefront, Bengaluru",
-      "headline": "Evening light, vertical living, quiet rooms.",
-      "summary": "An upcoming high-rise study exploring nocturnal presence, deep cantilevered terraces, and acoustic serenity.",
-      "overview": "North Atelier stands as a nocturnal sculpture along the northern lakes of Bengaluru. Designed with darkened acoustic glazing, private plunge pools on every terrace, and dedicated collector wine cellars.",
-      "specs": [
-        {
-          "label": "Typology",
-          "value": "Limited Edition Sky Villas"
-        },
-        {
-          "label": "Expression",
-          "value": "Acoustic Bronze & Low-E Glass"
-        },
-        {
-          "label": "Launch",
-          "value": "Winter 2026"
-        },
-        {
-          "label": "Approvals",
-          "value": "RERA Application in Progress"
-        }
-      ],
-      "amenities": [
-        "Acoustic lantern lobby",
-        "Rooftop observatory lounge",
-        "Private dining salon",
-        "Hanging terrace gardens",
-        "Audiophile cinema suite",
-        "Automated subterranean valet"
-      ],
-      "locationNotes": "Positioned along the airport express corridor with direct lake frontage and zero obstruction to sunset horizons.",
-      "cover": "/images/tower-night.jpg",
-      "gallery": [
-        "/images/tower-night.jpg",
-        "/images/penthouse-terrace.jpg",
-        "/images/interior-living.jpg",
-        "/images/facade-detail.jpg",
-        "/images/lobby-interior.jpg"
-      ],
-      "featured": false,
-      "isPublished": true,
-      "sortOrder": 5
-    },
-    {
       "_id": "6ad713a085975939566f22ea",
       "slug": "rishab-homes",
       "name": "Rishab homes",
@@ -536,6 +488,54 @@
       "sortOrder": 0,
       "createdAt": "2026-10-20T07:09:20.043Z",
       "updatedAt": "2026-10-20T16:11:03.940Z",
+      "__v": 0
+    },
+    {
+      "slug": "ram-projects",
+      "name": "Ram projects",
+      "status": "ongoing",
+      "type": "Residential",
+      "location": "bilaspur",
+      "price": "",
+      "headline": "",
+      "summary": "",
+      "overview": "",
+      "specs": [
+        {
+          "label": "Typology",
+          "value": "3 & 4 BHK Luxury Residences"
+        },
+        {
+          "label": "Storeys",
+          "value": "36 Floors"
+        },
+        {
+          "label": "Possession",
+          "value": "Q2 2027"
+        },
+        {
+          "label": "RERA Reg.",
+          "value": "P02400003891"
+        }
+      ],
+      "amenities": [
+        "Double-height arrival lobby",
+        "Pergola podium gardens",
+        "Temperature-controlled lap pool"
+      ],
+      "locationNotes": "",
+      "cover": "https://res.cloudinary.com/s4okijwq/image/upload/v1792582190/kks_constructions/wpm6ye5eahveiefdv7ld.jpg",
+      "gallery": [
+        "https://res.cloudinary.com/s4okijwq/image/upload/v1792582200/kks_constructions/l3idjpcml12neib9oeki.jpg"
+      ],
+      "videos": [],
+      "brochure": "",
+      "featured": false,
+      "isPublished": true,
+      "sortOrder": 0,
+      "_id": "6ad8a24c6affc1a363e6e058",
+      "createdAt": "2026-10-21T11:30:20.148Z",
+      "updatedAt": "2026-10-21T11:30:20.148Z",
       "__v": 0
     }
   ],
