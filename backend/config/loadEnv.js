@@ -43,6 +43,8 @@ export function loadEnv() {
     "CLOUDINARY_URL",
     "PORT",
     "NODE_ENV",
+    "BACKEND_URL",
+    "FRONTEND_URL",
     "CLIENT_ORIGIN",
     "SESSION_SECRET",
     "OWNER_USERNAME",
@@ -57,6 +59,14 @@ export function loadEnv() {
     if (typeof process.env[key] === "string") {
       process.env[key] = process.env[key].trim().replace(/^["']|["']$/g, "");
     }
+  }
+
+  // Cross-populate frontend origin variables for maximum compatibility
+  if (!process.env.CLIENT_ORIGIN && process.env.FRONTEND_URL) {
+    process.env.CLIENT_ORIGIN = process.env.FRONTEND_URL;
+  }
+  if (!process.env.FRONTEND_URL && process.env.CLIENT_ORIGIN) {
+    process.env.FRONTEND_URL = process.env.CLIENT_ORIGIN;
   }
 }
 

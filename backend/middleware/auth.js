@@ -9,15 +9,25 @@ const developmentSessionSecret = crypto.randomBytes(32).toString("hex");
 export function requireTrustedOrigin(req, res, next) {
   if (!unsafeMethods.has(req.method) || !req.get("Origin")) return next();
   const requestOrigin = req.get("Origin");
-  const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+  const rawOrigins = [
+    process.env.CLIENT_ORIGIN,
+    process.env.FRONTEND_URL,
+    "http://localhost:5173",
+  ]
+    .filter(Boolean)
+    .join(",");
+
+  const allowedOrigins = rawOrigins
     .split(",")
     .map((origin) => {
       try {
         return new URL(origin.trim()).origin;
       } catch {
-        return "";
+        return origin.trim().replace(/\/+$/, "");
       }
-    });
+    })
+    .filter(Boolean);
+
   let isLocalDevelopmentOrigin = false;
   if (process.env.NODE_ENV !== "production") {
     try {
@@ -28,7 +38,15 @@ export function requireTrustedOrigin(req, res, next) {
       isLocalDevelopmentOrigin = false;
     }
   }
-  if (!allowedOrigins.includes(requestOrigin) && !isLocalDevelopmentOrigin) {
+
+  let normalizedRequestOrigin = "";
+  try {
+    normalizedRequestOrigin = new URL(requestOrigin).origin;
+  } catch {
+    normalizedRequestOrigin = requestOrigin.replace(/\/+$/, "");
+  }
+
+  if (!allowedOrigins.includes(normalizedRequestOrigin) && !isLocalDevelopmentOrigin) {
     return res.status(403).json({ error: "Request origin is not allowed." });
   }
   return next();

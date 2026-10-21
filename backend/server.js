@@ -15,9 +15,34 @@ const app = express();
 const port = Number(process.env.PORT) || 5000;
 
 // CORS configuration supporting single or comma-separated origins with credentials
-const configuredOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
-  .split(",")
-  .map((o) => o.trim());
+// Reads CLIENT_ORIGIN and FRONTEND_URL from environment
+const rawOrigins = [
+  process.env.CLIENT_ORIGIN,
+  process.env.FRONTEND_URL,
+]
+  .filter(Boolean)
+  .join(",");
+
+const defaultOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+];
+
+const configuredOrigins = Array.from(
+  new Set(
+    (rawOrigins || defaultOrigins.join(","))
+      .split(",")
+      .map((o) => {
+        try {
+          return new URL(o.trim()).origin;
+        } catch {
+          return o.trim().replace(/\/+$/, "");
+        }
+      })
+      .filter(Boolean)
+  )
+);
 
 if (process.env.NODE_ENV === "production") {
   const requiredProductionSettings = [
@@ -66,15 +91,24 @@ app.use(
     origin: (requestOrigin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, or same-origin)
       if (!requestOrigin) return callback(null, true);
+      let normalizedOrigin = "";
+      try {
+        normalizedOrigin = new URL(requestOrigin).origin;
+      } catch {
+        normalizedOrigin = requestOrigin.replace(/\/+$/, "");
+      }
+
       if (
-        configuredOrigins.includes(requestOrigin) ||
+        configuredOrigins.includes(normalizedOrigin) ||
         process.env.NODE_ENV !== "production"
       ) {
         return callback(null, true);
       }
-      return callback(new Error("CORS policy violation for origin: " + requestOrigin));
+      return callback(null, false);
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
   })
 );
 
