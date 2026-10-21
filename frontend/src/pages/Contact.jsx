@@ -1,5 +1,5 @@
 import { Clock, HelpCircle, Mail, MessageSquare, Phone } from "lucide-react";
-import EnquiryForm from "../components/EnquiryForm";
+import DirectContactSection from "../components/DirectContactSection";
 import PageHero from "../components/PageHero";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useSiteContent } from "../context/ContentContext";
@@ -106,10 +106,7 @@ export default function Contact() {
         </div>
 
         <div>
-          <span className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep">{contactCopy.inquiryEyebrow}</span>
-          <h2 className="mt-2 font-display text-4xl">{contactCopy.inquiryTitle}</h2>
-          <p className="mt-3 mb-10 text-sm text-stone">{contactCopy.inquiryCopy}</p>
-          <EnquiryForm source="contact-page" submitLabel={contactCopy.submitLabel} />
+          <DirectContactSection title="Private Advisory Desk" />
         </div>
       </section>}
 

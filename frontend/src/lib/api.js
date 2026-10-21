@@ -299,10 +299,23 @@ export async function uploadAdminImage(file) {
   return data;
 }
 
-export async function fetchAdminEnquiries() {
-  const response = await fetch(apiUrl("/api/admin/enquiries"), {
+export async function fetchAdminEnquiries({ status } = {}) {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  const response = await fetch(apiUrl(`/api/admin/enquiries${query}`), {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Failed to load enquiries.");
   return response.json();
+}
+
+export async function updateEnquiryStatus(id, status) {
+  const response = await fetch(apiUrl(`/api/admin/enquiries/${encodeURIComponent(id)}/status`), {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ status }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Failed to update enquiry status.");
+  return data;
 }

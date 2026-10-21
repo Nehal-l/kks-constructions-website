@@ -18,6 +18,11 @@ const enquirySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    subject: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     message: {
       type: String,
       required: true,
@@ -33,7 +38,7 @@ const enquirySchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["new", "contacted", "closed"],
+      enum: ["new", "read", "replied"],
       default: "new",
     },
   },
@@ -43,4 +48,3 @@ const enquirySchema = new mongoose.Schema(
 );
 
 export const Enquiry = mongoose.models.Enquiry || mongoose.model("Enquiry", enquirySchema);
-

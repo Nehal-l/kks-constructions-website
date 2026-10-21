@@ -18,6 +18,7 @@ import {
   deleteTestimonial,
   reorderTestimonials,
   getEnquiries,
+  updateEnquiryStatus,
 } from "../services/datastore.js";
 
 const router = express.Router();
@@ -325,12 +326,12 @@ router.get("/overview", async (_req, res) => {
         totalEnquiries: enquiries.length,
       },
       system: {
-        database: isDbConnected() ? "MongoDB Atlas" : "Local Storage (Resilient Mode)",
-        media: isCloudinaryReady() ? "Cloudinary Cloud" : "Local Media (Resilient Mode)",
+        database: isDbConnected() ? "MongoDB Atlas" : "Disconnected",
+        media: isCloudinaryReady() ? "Cloudinary Cloud" : "Local Storage",
       },
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to generate admin overview." });
+    res.status(500).json({ error: err.message || "Failed to generate admin overview." });
   }
 });
 
@@ -342,7 +343,7 @@ router.get("/content", async (_req, res) => {
     const content = await getSiteContent(true);
     res.json({ ok: true, content });
   } catch (err) {
-    res.status(500).json({ error: "Failed to load content." });
+    res.status(500).json({ error: err.message || "Failed to load content." });
   }
 });
 
@@ -359,8 +360,8 @@ router.put("/content", async (req, res) => {
       content: updated,
     });
   } catch (err) {
-    console.error("Update site content error:", err);
-    res.status(500).json({ error: "Failed to update site content." });
+    console.error("Update site content error:", err.message);
+    res.status(500).json({ error: err.message || "Failed to update site content." });
   }
 });
 
@@ -372,7 +373,7 @@ router.get("/projects", async (_req, res) => {
     const projects = await getProjects(true);
     res.json({ ok: true, projects });
   } catch (err) {
-    res.status(500).json({ error: "Failed to load projects." });
+    res.status(500).json({ error: err.message || "Failed to load projects." });
   }
 });
 
@@ -402,8 +403,8 @@ router.post("/projects", async (req, res) => {
 
     res.status(201).json({ ok: true, message: "Project created successfully.", project: newProject });
   } catch (err) {
-    console.error("Create project error:", err);
-    res.status(500).json({ error: "Failed to create project." });
+    console.error("Create project error:", err.message);
+    res.status(500).json({ error: err.message || "Failed to create project." });
   }
 });
 
@@ -419,7 +420,7 @@ router.put("/projects/:idOrSlug", async (req, res) => {
     }
     res.json({ ok: true, message: "Project updated successfully.", project: updated });
   } catch (err) {
-    res.status(500).json({ error: "Failed to update project." });
+    res.status(500).json({ error: err.message || "Failed to update project." });
   }
 });
 
@@ -432,7 +433,7 @@ router.delete("/projects/:idOrSlug", async (req, res) => {
     }
     res.json({ ok: true, message: "Project deleted successfully." });
   } catch (err) {
-    res.status(500).json({ error: "Failed to delete project." });
+    res.status(500).json({ error: err.message || "Failed to delete project." });
   }
 });
 
@@ -452,7 +453,7 @@ router.patch("/projects/:idOrSlug/toggle-publish", async (req, res) => {
       project: updated,
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to toggle project publish state." });
+    res.status(500).json({ error: err.message || "Failed to toggle project publish state." });
   }
 });
 
@@ -466,7 +467,7 @@ router.post("/projects/reorder", async (req, res) => {
     await reorderProjects(orderedSlugs);
     res.json({ ok: true, message: "Project display order updated." });
   } catch (err) {
-    res.status(500).json({ error: "Failed to reorder projects." });
+    res.status(500).json({ error: err.message || "Failed to reorder projects." });
   }
 });
 
@@ -478,7 +479,7 @@ router.get("/testimonials", async (_req, res) => {
     const testimonials = await getTestimonials(true);
     res.json({ ok: true, testimonials });
   } catch (err) {
-    res.status(500).json({ error: "Failed to load testimonials." });
+    res.status(500).json({ error: err.message || "Failed to load testimonials." });
   }
 });
 
@@ -495,7 +496,7 @@ router.post("/testimonials", async (req, res) => {
     });
     res.status(201).json({ ok: true, message: "Testimonial created successfully.", testimonial: newT });
   } catch (err) {
-    res.status(500).json({ error: "Failed to create testimonial." });
+    res.status(500).json({ error: err.message || "Failed to create testimonial." });
   }
 });
 
@@ -508,7 +509,7 @@ router.put("/testimonials/:id", async (req, res) => {
     }
     res.json({ ok: true, message: "Testimonial updated successfully.", testimonial: updated });
   } catch (err) {
-    res.status(500).json({ error: "Failed to update testimonial." });
+    res.status(500).json({ error: err.message || "Failed to update testimonial." });
   }
 });
 
@@ -521,7 +522,7 @@ router.delete("/testimonials/:id", async (req, res) => {
     }
     res.json({ ok: true, message: "Testimonial deleted successfully." });
   } catch (err) {
-    res.status(500).json({ error: "Failed to delete testimonial." });
+    res.status(500).json({ error: err.message || "Failed to delete testimonial." });
   }
 });
 
@@ -542,7 +543,7 @@ router.patch("/testimonials/:id/toggle-publish", async (req, res) => {
       testimonial: updated,
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to toggle testimonial publish state." });
+    res.status(500).json({ error: err.message || "Failed to toggle testimonial publish state." });
   }
 });
 
@@ -556,7 +557,7 @@ router.post("/testimonials/reorder", async (req, res) => {
     await reorderTestimonials(orderedIds);
     res.json({ ok: true, message: "Testimonial display order updated." });
   } catch (err) {
-    res.status(500).json({ error: "Failed to reorder testimonials." });
+    res.status(500).json({ error: err.message || "Failed to reorder testimonials." });
   }
 });
 
@@ -595,8 +596,8 @@ router.post("/upload", (req, res) => {
         storage: result.storage,
       });
     } catch (uploadErr) {
-      console.error("Upload handler error:", uploadErr);
-      return res.status(500).json({ error: "Failed to process image upload." });
+      console.error("Upload handler error:", uploadErr.message);
+      return res.status(500).json({ error: uploadErr.message || "Failed to process image upload." });
     }
   });
 });
@@ -604,12 +605,31 @@ router.post("/upload", (req, res) => {
 // --- ENQUIRIES ---
 
 // GET /api/admin/enquiries
-router.get("/enquiries", async (_req, res) => {
+router.get("/enquiries", async (req, res) => {
   try {
-    const list = await getEnquiries();
+    const status = req.query.status?.trim();
+    const list = await getEnquiries(status ? { status } : {});
     res.json({ ok: true, enquiries: list });
   } catch (err) {
-    res.status(500).json({ error: "Failed to load enquiries." });
+    res.status(500).json({ error: err.message || "Failed to load enquiries." });
+  }
+});
+
+// PATCH /api/admin/enquiries/:id/status
+router.patch("/enquiries/:id/status", async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowed = ["new", "read", "replied"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ error: `Status must be one of: ${allowed.join(", ")}` });
+    }
+    const updated = await updateEnquiryStatus(req.params.id, status);
+    if (!updated) {
+      return res.status(404).json({ error: "Enquiry not found." });
+    }
+    res.json({ ok: true, message: `Enquiry marked as ${status}.`, enquiry: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Failed to update enquiry status." });
   }
 });
 

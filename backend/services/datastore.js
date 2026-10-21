@@ -1,3 +1,4 @@
+import "../config/loadEnv.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,10 +31,7 @@ function mergeWithDefaults(defaults, stored) {
   ]));
 }
 
-// Deep-merge a partial content patch over a base object. Arrays are replaced
-// wholesale (list edits are authoritative), while nested objects (company,
-// pageHeroes, homeIntro, footer, pageCopy, ...) are merged field-by-field so a
-// partial admin update does not wipe sibling fields.
+// Deep-merge a partial content patch over a base object.
 function deepMergeContent(base, patch) {
   if (patch === undefined) return base;
   if (Array.isArray(patch)) return patch;
@@ -45,9 +43,7 @@ function deepMergeContent(base, patch) {
   ]));
 }
 
-// Flatten a nested object patch into Mongo dotted `$set` paths so a partial
-// update to a nested object (e.g. homeIntro.title) merges field-by-field
-// instead of replacing the whole subdocument. Arrays are treated as leaves.
+// Flatten a nested object patch into Mongo dotted `$set` paths
 function flattenToDottedSet(patch, prefix = "", out = {}) {
   for (const [key, value] of Object.entries(patch)) {
     const path = prefix ? `${prefix}.${key}` : key;
@@ -141,7 +137,7 @@ export async function bootstrapSystem() {
     process.env.NODE_ENV === "production" ? "" : "kks123"
   );
   if (!initialPassword) {
-    throw new Error("OWNER_INITIAL_PASSWORD must be configured before production bootstrap.");
+    throw new Error("OWNER_INITIAL_PASSWORD must be configured before bootstrap.");
   }
 
   // Bootstrap in local store
@@ -165,8 +161,12 @@ export async function bootstrapSystem() {
     console.log(` Seeded owner account in local store: ${ownerUsername} (${ownerEmail})`);
   }
 
-  // If MongoDB is connected, ensure Owner, Content, Projects, and Testimonials are in Mongo
-  if (isDbConnected()) {
+  // If MongoDB URI is configured, ensure DB is connected and seeded
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected during system bootstrap.");
+    }
+
     try {
       const existingUser = await User.findOne({
         $or: [{ username: ownerUsername }, { email: ownerEmail }],
@@ -189,7 +189,7 @@ export async function bootstrapSystem() {
           key: "main_content",
           ...localStore.content,
         });
-        console.log(" Seeded site content into MongoDB.");
+        console.log(" Seeded site content into MongoDB Atlas.");
       } else {
         const storedContent = await SiteContent.findOne({ key: "main_content" });
         const rawContent = storedContent?.toObject() || {};
@@ -215,16 +215,17 @@ export async function bootstrapSystem() {
       const projectsCount = await Project.countDocuments();
       if (projectsCount === 0) {
         await Project.insertMany(localStore.projects);
-        console.log(` Seeded ${localStore.projects.length} projects into MongoDB.`);
+        console.log(` Seeded ${localStore.projects.length} projects into MongoDB Atlas.`);
       }
 
       const testimonialsCount = await Testimonial.countDocuments();
       if (testimonialsCount === 0) {
         await Testimonial.insertMany(localStore.testimonials);
-        console.log(` Seeded ${localStore.testimonials.length} testimonials into MongoDB.`);
+        console.log(` Seeded ${localStore.testimonials.length} testimonials into MongoDB Atlas.`);
       }
     } catch (err) {
-      console.error("Error bootstrapping MongoDB collections:", err.message);
+      console.error("❌ Error bootstrapping MongoDB collections:", err.message);
+      throw new Error(`MongoDB bootstrap failed: ${err.message}`);
     }
   }
 }
@@ -244,14 +245,22 @@ function withoutStorageFields(document) {
 }
 
 export async function getSiteContent(includeDraft = false) {
-  if (isDbConnected()) {
-    const doc = await SiteContent.findOne({ key: "main_content" });
-    if (doc) {
-      const stored = doc.toObject();
-      const publishedContent = withoutStorageFields(stored);
-      return includeDraft && stored.draftContent
-        ? deepMergeContent(publishedContent, stored.draftContent)
-        : publishedContent;
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to load site content.");
+    }
+    try {
+      const doc = await SiteContent.findOne({ key: "main_content" });
+      if (doc) {
+        const stored = doc.toObject();
+        const publishedContent = withoutStorageFields(stored);
+        return includeDraft && stored.draftContent
+          ? deepMergeContent(publishedContent, stored.draftContent)
+          : publishedContent;
+      }
+    } catch (err) {
+      console.error("❌ Failed to query site content from MongoDB:", err.message);
+      throw new Error(`Database query failed for site content: ${err.message}`);
     }
   }
   return includeDraft && localStore.draftContent
@@ -260,44 +269,54 @@ export async function getSiteContent(includeDraft = false) {
 }
 
 export async function updateSiteContent(data, publish = true) {
-  if (isDbConnected()) {
-    if (!publish) {
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Content updates cannot be saved.");
+    }
+    try {
+      if (!publish) {
+        const existing = await SiteContent.findOne({ key: "main_content" });
+        const mergedDraft = deepMergeContent(existing?.draftContent, data);
+        await SiteContent.findOneAndUpdate(
+          { key: "main_content" },
+          { $set: { draftContent: mergedDraft } },
+          { new: true, upsert: true, setDefaultsOnInsert: true }
+        );
+        localStore.draftContent = mergedDraft;
+        saveLocalStore();
+        return getSiteContent(true);
+      }
       const existing = await SiteContent.findOne({ key: "main_content" });
-      const mergedDraft = deepMergeContent(existing?.draftContent, data);
-      await SiteContent.findOneAndUpdate(
+      const publishedBase = existing ? withoutStorageFields(existing.toObject()) : {};
+      const mergedPublish = deepMergeContent(
+        deepMergeContent(publishedBase, existing?.draftContent),
+        data
+      );
+      const updatePayload = {
+        ...flattenToDottedSet(mergedPublish),
+        sectionVisibility: mergedPublish.sectionVisibility || {},
+        pageVisibility: mergedPublish.pageVisibility || {},
+        sections: mergedPublish.sections || [],
+      };
+      const updated = await SiteContent.findOneAndUpdate(
         { key: "main_content" },
-        { $set: { draftContent: mergedDraft } },
+        { $set: updatePayload, $unset: { draftContent: 1 } },
         { new: true, upsert: true, setDefaultsOnInsert: true }
       );
-      localStore.draftContent = mergedDraft;
+      localStore.content = withoutStorageFields(updated.toObject());
+      localStore.content.sectionVisibility = mergedPublish.sectionVisibility || {};
+      localStore.content.pageVisibility = mergedPublish.pageVisibility || {};
+      localStore.content.sections = mergedPublish.sections || [];
+      localStore.draftContent = null;
       saveLocalStore();
-      return getSiteContent(true);
+      return getSiteContent();
+    } catch (err) {
+      console.error("❌ Failed to update site content in MongoDB:", err.message);
+      throw new Error(`Database update failed for site content: ${err.message}`);
     }
-    const existing = await SiteContent.findOne({ key: "main_content" });
-    const publishedBase = existing ? withoutStorageFields(existing.toObject()) : {};
-    const mergedPublish = deepMergeContent(
-      deepMergeContent(publishedBase, existing?.draftContent),
-      data
-    );
-    const updatePayload = {
-      ...flattenToDottedSet(mergedPublish),
-      sectionVisibility: mergedPublish.sectionVisibility || {},
-      pageVisibility: mergedPublish.pageVisibility || {},
-      sections: mergedPublish.sections || [],
-    };
-    const updated = await SiteContent.findOneAndUpdate(
-      { key: "main_content" },
-      { $set: updatePayload, $unset: { draftContent: 1 } },
-      { new: true, upsert: true, setDefaultsOnInsert: true }
-    );
-    localStore.content = withoutStorageFields(updated.toObject());
-    localStore.content.sectionVisibility = mergedPublish.sectionVisibility || {};
-    localStore.content.pageVisibility = mergedPublish.pageVisibility || {};
-    localStore.content.sections = mergedPublish.sections || [];
-    localStore.draftContent = null;
-    saveLocalStore();
-    return getSiteContent();
   }
+
+  // Pure local store mode when MONGODB_URI is not configured
   if (!publish) {
     localStore.draftContent = deepMergeContent(localStore.draftContent, data);
     saveLocalStore();
@@ -322,9 +341,17 @@ export async function updateSiteContent(data, publish = true) {
 }
 
 export async function getProjects(includeUnpublished = false) {
-  if (isDbConnected()) {
-    const query = includeUnpublished ? {} : { isPublished: { $ne: false } };
-    return Project.find(query).sort({ sortOrder: 1, createdAt: -1 }).lean();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to retrieve projects.");
+    }
+    try {
+      const query = includeUnpublished ? {} : { isPublished: { $ne: false } };
+      return await Project.find(query).sort({ sortOrder: 1, createdAt: -1 }).lean();
+    } catch (err) {
+      console.error("❌ Failed to query projects from MongoDB:", err.message);
+      throw new Error(`Database query failed for projects: ${err.message}`);
+    }
   }
   return localStore.projects
     .filter((p) => includeUnpublished || p.isPublished !== false)
@@ -332,9 +359,17 @@ export async function getProjects(includeUnpublished = false) {
 }
 
 export async function getProjectBySlug(slug, includeUnpublished = false) {
-  if (isDbConnected()) {
-    const query = includeUnpublished ? { slug } : { slug, isPublished: true };
-    return Project.findOne(query).lean();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to retrieve project.");
+    }
+    try {
+      const query = includeUnpublished ? { slug } : { slug, isPublished: true };
+      return await Project.findOne(query).lean();
+    } catch (err) {
+      console.error(`❌ Failed to query project '${slug}' from MongoDB:`, err.message);
+      throw new Error(`Database query failed for project: ${err.message}`);
+    }
   }
   return (
     localStore.projects.find(
@@ -344,11 +379,19 @@ export async function getProjectBySlug(slug, includeUnpublished = false) {
 }
 
 export async function createProject(data) {
-  if (isDbConnected()) {
-    const created = await Project.create(data);
-    localStore.projects.push(created.toObject());
-    saveLocalStore();
-    return created.toObject();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot create project.");
+    }
+    try {
+      const created = await Project.create(data);
+      localStore.projects.push(created.toObject());
+      saveLocalStore();
+      return created.toObject();
+    } catch (err) {
+      console.error("❌ Failed to create project in MongoDB:", err.message);
+      throw new Error(`Database write failed for project creation: ${err.message}`);
+    }
   }
   const newProj = {
     _id: `proj_${Date.now()}`,
@@ -362,20 +405,28 @@ export async function createProject(data) {
 }
 
 export async function updateProject(slugOrId, data) {
-  if (isDbConnected()) {
-    const query = slugOrId.match(/^[0-9a-fA-F]{24}$/)
-      ? { _id: slugOrId }
-      : { slug: slugOrId };
-    const updated = await Project.findOneAndUpdate(query, { $set: data }, { new: true });
-    if (updated) {
-      const idx = localStore.projects.findIndex(
-        (p) => p.slug === updated.slug || p._id === updated._id.toString()
-      );
-      if (idx !== -1) localStore.projects[idx] = updated.toObject();
-      saveLocalStore();
-      return updated.toObject();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot update project.");
     }
-    return null;
+    try {
+      const query = slugOrId.match(/^[0-9a-fA-F]{24}$/)
+        ? { _id: slugOrId }
+        : { slug: slugOrId };
+      const updated = await Project.findOneAndUpdate(query, { $set: data }, { new: true });
+      if (updated) {
+        const idx = localStore.projects.findIndex(
+          (p) => p.slug === updated.slug || p._id === updated._id.toString()
+        );
+        if (idx !== -1) localStore.projects[idx] = updated.toObject();
+        saveLocalStore();
+        return updated.toObject();
+      }
+      return null;
+    } catch (err) {
+      console.error("❌ Failed to update project in MongoDB:", err.message);
+      throw new Error(`Database update failed for project: ${err.message}`);
+    }
   }
   const idx = localStore.projects.findIndex(
     (p) => p.slug === slugOrId || p._id === slugOrId
@@ -391,19 +442,27 @@ export async function updateProject(slugOrId, data) {
 }
 
 export async function deleteProject(slugOrId) {
-  if (isDbConnected()) {
-    const query = slugOrId.match(/^[0-9a-fA-F]{24}$/)
-      ? { _id: slugOrId }
-      : { slug: slugOrId };
-    const deleted = await Project.findOneAndDelete(query);
-    if (deleted) {
-      localStore.projects = localStore.projects.filter(
-        (p) => p.slug !== deleted.slug && p._id !== deleted._id.toString()
-      );
-      saveLocalStore();
-      return true;
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot delete project.");
     }
-    return false;
+    try {
+      const query = slugOrId.match(/^[0-9a-fA-F]{24}$/)
+        ? { _id: slugOrId }
+        : { slug: slugOrId };
+      const deleted = await Project.findOneAndDelete(query);
+      if (deleted) {
+        localStore.projects = localStore.projects.filter(
+          (p) => p.slug !== deleted.slug && p._id !== deleted._id.toString()
+        );
+        saveLocalStore();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("❌ Failed to delete project in MongoDB:", err.message);
+      throw new Error(`Database delete failed for project: ${err.message}`);
+    }
   }
   const initLen = localStore.projects.length;
   localStore.projects = localStore.projects.filter(
@@ -416,14 +475,22 @@ export async function deleteProject(slugOrId) {
 export async function reorderProjects(orderedSlugs) {
   if (!Array.isArray(orderedSlugs)) return false;
 
-  if (isDbConnected()) {
-    const updates = orderedSlugs.map((slug, idx) =>
-      Project.updateOne({ slug }, { $set: { sortOrder: idx } })
-    );
-    await Promise.all(updates);
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot reorder projects.");
+    }
+    try {
+      const updates = orderedSlugs.map((slug, idx) =>
+        Project.updateOne({ slug }, { $set: { sortOrder: idx } })
+      );
+      await Promise.all(updates);
+    } catch (err) {
+      console.error("❌ Failed to reorder projects in MongoDB:", err.message);
+      throw new Error(`Database update failed for project reordering: ${err.message}`);
+    }
   }
 
-  // Update local
+  // Update local cache
   orderedSlugs.forEach((slug, idx) => {
     const proj = localStore.projects.find((p) => p.slug === slug);
     if (proj) proj.sortOrder = idx;
@@ -435,9 +502,17 @@ export async function reorderProjects(orderedSlugs) {
 
 // Testimonials
 export async function getTestimonials(includeUnpublished = false) {
-  if (isDbConnected()) {
-    const query = includeUnpublished ? {} : { isPublished: { $ne: false } };
-    return Testimonial.find(query).sort({ sortOrder: 1, createdAt: -1 }).lean();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to retrieve testimonials.");
+    }
+    try {
+      const query = includeUnpublished ? {} : { isPublished: { $ne: false } };
+      return await Testimonial.find(query).sort({ sortOrder: 1, createdAt: -1 }).lean();
+    } catch (err) {
+      console.error("❌ Failed to query testimonials from MongoDB:", err.message);
+      throw new Error(`Database query failed for testimonials: ${err.message}`);
+    }
   }
   return localStore.testimonials
     .filter((t) => includeUnpublished || t.isPublished !== false)
@@ -445,11 +520,19 @@ export async function getTestimonials(includeUnpublished = false) {
 }
 
 export async function createTestimonial(data) {
-  if (isDbConnected()) {
-    const created = await Testimonial.create(data);
-    localStore.testimonials.push(created.toObject());
-    saveLocalStore();
-    return created.toObject();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot create testimonial.");
+    }
+    try {
+      const created = await Testimonial.create(data);
+      localStore.testimonials.push(created.toObject());
+      saveLocalStore();
+      return created.toObject();
+    } catch (err) {
+      console.error("❌ Failed to create testimonial in MongoDB:", err.message);
+      throw new Error(`Database write failed for testimonial: ${err.message}`);
+    }
   }
   const newT = {
     _id: `t_${Date.now()}`,
@@ -463,15 +546,24 @@ export async function createTestimonial(data) {
 }
 
 export async function updateTestimonial(id, data) {
-  if (isDbConnected()) {
-    const updated = await Testimonial.findByIdAndUpdate(id, { $set: data }, { new: true });
-    if (updated) {
-      const idx = localStore.testimonials.findIndex(
-        (t) => t._id === id || t.id === id || t._id === updated._id.toString()
-      );
-      if (idx !== -1) localStore.testimonials[idx] = updated.toObject();
-      saveLocalStore();
-      return updated.toObject();
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot update testimonial.");
+    }
+    try {
+      const updated = await Testimonial.findByIdAndUpdate(id, { $set: data }, { new: true });
+      if (updated) {
+        const idx = localStore.testimonials.findIndex(
+          (t) => t._id === id || t.id === id || t._id === updated._id.toString()
+        );
+        if (idx !== -1) localStore.testimonials[idx] = updated.toObject();
+        saveLocalStore();
+        return updated.toObject();
+      }
+      return null;
+    } catch (err) {
+      console.error("❌ Failed to update testimonial in MongoDB:", err.message);
+      throw new Error(`Database update failed for testimonial: ${err.message}`);
     }
   }
   const idx = localStore.testimonials.findIndex((t) => t._id === id || t.id === id);
@@ -486,14 +578,23 @@ export async function updateTestimonial(id, data) {
 }
 
 export async function deleteTestimonial(id) {
-  if (isDbConnected()) {
-    const deleted = await Testimonial.findByIdAndDelete(id);
-    if (deleted) {
-      localStore.testimonials = localStore.testimonials.filter(
-        (t) => t._id !== id && t.id !== id
-      );
-      saveLocalStore();
-      return true;
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot delete testimonial.");
+    }
+    try {
+      const deleted = await Testimonial.findByIdAndDelete(id);
+      if (deleted) {
+        localStore.testimonials = localStore.testimonials.filter(
+          (t) => t._id !== id && t.id !== id
+        );
+        saveLocalStore();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("❌ Failed to delete testimonial in MongoDB:", err.message);
+      throw new Error(`Database delete failed for testimonial: ${err.message}`);
     }
   }
   const initLen = localStore.testimonials.length;
@@ -507,11 +608,19 @@ export async function deleteTestimonial(id) {
 export async function reorderTestimonials(orderedIds) {
   if (!Array.isArray(orderedIds)) return false;
 
-  if (isDbConnected()) {
-    const updates = orderedIds.map((id, idx) =>
-      Testimonial.findByIdAndUpdate(id, { $set: { sortOrder: idx } })
-    );
-    await Promise.all(updates);
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot reorder testimonials.");
+    }
+    try {
+      const updates = orderedIds.map((id, idx) =>
+        Testimonial.findByIdAndUpdate(id, { $set: { sortOrder: idx } })
+      );
+      await Promise.all(updates);
+    } catch (err) {
+      console.error("❌ Failed to reorder testimonials in MongoDB:", err.message);
+      throw new Error(`Database update failed for testimonial reordering: ${err.message}`);
+    }
   }
 
   orderedIds.forEach((id, idx) => {
@@ -525,35 +634,91 @@ export async function reorderTestimonials(orderedIds) {
 
 // Enquiries
 export async function saveEnquiry(payload) {
-  if (isDbConnected()) {
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot save enquiry.");
+    }
     try {
-      await Enquiry.create(payload);
+      const created = await Enquiry.create(payload);
+      return created.toObject();
     } catch (e) {
-      console.error("MongoDB save enquiry error:", e.message);
+      console.error("❌ MongoDB save enquiry error:", e.message);
+      throw new Error(`Database write failed for enquiry: ${e.message}`);
     }
   }
 
-  // Also persist to enquiries.json
+  // Local store fallback (only when MONGODB_URI not configured)
+  const newEnq = { _id: `enq_${Date.now()}`, ...payload };
   try {
     let list = [];
     if (fs.existsSync(enquiriesFile)) {
       list = JSON.parse(fs.readFileSync(enquiriesFile, "utf-8"));
     }
-    list.push(payload);
+    list.push(newEnq);
     fs.writeFileSync(enquiriesFile, JSON.stringify(list, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to save enquiry to disk:", err.message);
+    throw new Error(`Failed to save enquiry: ${err.message}`);
   }
+  return newEnq;
 }
 
-export async function getEnquiries() {
-  if (isDbConnected()) {
-    const docs = await Enquiry.find().sort({ createdAt: -1 }).lean();
-    if (docs && docs.length > 0) return docs;
+export async function updateEnquiryStatus(id, status) {
+  const allowed = ["new", "read", "replied"];
+  if (!allowed.includes(status)) {
+    throw new Error(`Invalid status. Allowed: ${allowed.join(", ")}`);
+  }
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Cannot update enquiry.");
+    }
+    try {
+      const updated = await Enquiry.findByIdAndUpdate(
+        id,
+        { $set: { status } },
+        { new: true }
+      );
+      if (!updated) return null;
+      return updated.toObject();
+    } catch (err) {
+      console.error("❌ Failed to update enquiry status in MongoDB:", err.message);
+      throw new Error(`Database update failed for enquiry status: ${err.message}`);
+    }
+  }
+  // Local fallback
+  try {
+    if (fs.existsSync(enquiriesFile)) {
+      const list = JSON.parse(fs.readFileSync(enquiriesFile, "utf-8"));
+      const idx = list.findIndex((e) => e._id === id || e.id === id);
+      if (idx === -1) return null;
+      list[idx] = { ...list[idx], status };
+      fs.writeFileSync(enquiriesFile, JSON.stringify(list, null, 2), "utf-8");
+      return list[idx];
+    }
+  } catch (err) {
+    console.error("Failed to update enquiry status on disk:", err.message);
+    throw new Error(`Failed to update enquiry: ${err.message}`);
+  }
+  return null;
+}
+
+export async function getEnquiries({ status } = {}) {
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to retrieve enquiries.");
+    }
+    try {
+      const query = status ? { status } : {};
+      return await Enquiry.find(query).sort({ createdAt: -1 }).lean();
+    } catch (err) {
+      console.error("❌ Failed to query enquiries from MongoDB:", err.message);
+      throw new Error(`Database query failed for enquiries: ${err.message}`);
+    }
   }
   try {
     if (fs.existsSync(enquiriesFile)) {
-      return JSON.parse(fs.readFileSync(enquiriesFile, "utf-8")).reverse();
+      const list = JSON.parse(fs.readFileSync(enquiriesFile, "utf-8")).reverse();
+      return status ? list.filter((e) => e.status === status) : list;
     }
   } catch {
     return [];
@@ -564,20 +729,36 @@ export async function getEnquiries() {
 // User Lookups
 export async function findUserByLogin(identifier) {
   const clean = identifier.toLowerCase().trim();
-  if (isDbConnected()) {
-    const user = await User.findOne({
-      $or: [{ username: clean }, { email: clean }],
-    });
-    if (user) return user;
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to verify user.");
+    }
+    try {
+      const user = await User.findOne({
+        $or: [{ username: clean }, { email: clean }],
+      });
+      return user || null;
+    } catch (err) {
+      console.error("❌ Failed to find user in MongoDB:", err.message);
+      throw new Error(`Database query failed for user authentication: ${err.message}`);
+    }
   }
   return localStore.users.find((u) => u.username === clean || u.email === clean) || null;
 }
 
 export async function updateUserPassword(userId, newPasswordHash) {
-  if (isDbConnected()) {
-    await User.findByIdAndUpdate(userId, {
-      $set: { password: newPasswordHash, updatedAt: new Date() },
-    });
+  if (process.env.MONGODB_URI) {
+    if (!isDbConnected()) {
+      throw new Error("MongoDB Atlas is configured but not connected. Unable to update password.");
+    }
+    try {
+      await User.findByIdAndUpdate(userId, {
+        $set: { password: newPasswordHash, updatedAt: new Date() },
+      });
+    } catch (err) {
+      console.error("❌ Failed to update password in MongoDB:", err.message);
+      throw new Error(`Database update failed for user password: ${err.message}`);
+    }
   }
   const u = localStore.users.find(
     (user) => user._id === userId || user._id.toString() === userId.toString()

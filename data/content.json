@@ -8,130 +8,52 @@
       "role": "owner",
       "createdAt": "2026-10-18T11:57:00.782Z",
       "updatedAt": "2026-10-18T11:57:00.784Z"
+    },
+    {
+      "_id": "user_1792566015311",
+      "username": "constructionskks",
+      "email": "constructionskks@gmail.com",
+      "password": "$2b$10$tuMSt9nQ2HNeeT.BT6cJgO1LfVYI1H6GtCL9ybMagI3/EQM4.7Ixm",
+      "role": "owner",
+      "createdAt": "2026-10-21T07:00:15.312Z",
+      "updatedAt": "2026-10-21T07:00:15.314Z"
     }
   ],
   "content": {
-    "company": {
-      "contact": {
-        "addressLine": "Road No. 36, Jubilee Hills",
-        "city": "Hyderabad, Telangana — 500033",
-        "phone": "+91 98490 12345",
-        "email": "enquiries@kksconstructions.com",
-        "hours": "Monday–Saturday, 10:00 AM – 6:30 PM IST",
-        "mapNote": "Private viewing suites available by prior appointment at our Jubilee Hills advisory studio.",
-        "whatsapp": ""
-      },
-      "social": {
-        "instagram": "https://instagram.com",
-        "linkedin": "https://linkedin.com",
-        "youtube": "https://youtube.com"
-      },
-      "disclaimers": {
-        "visuals": "Architectural visuals on this website are concept imagery generated for design demonstration. They reflect design philosophy and aesthetic specifications for KKS developments.",
-        "legal": "Project specifications, amenities, and floor plans are subject to final municipal clearances and RERA disclosures. This portfolio serves as an architectural presentation."
-      },
-      "name": "NL Constructions",
-      "shortName": "KKS",
-      "tagline": "We don't just build structures, we build the trust that lasts",
-      "logo": "/images/logo.png",
-      "description": "KKS Constructions is a distinguished developer of ultra-luxury residences and mixed-use sanctuaries across India. We believe in architecture that holds the light, endures across generations, and enriches everyday rituals.",
-      "overview": "We design and deliver elevated living environments where architecture, landscape, and daily ritual meet. From sky mansions in urban financial capitals to secluded coastal courtyard villas, each KKS development is an essay in structural permanence, thermal comfort, and restrained elegance.",
-      "mission": "To create enduring places with rigorous craft, considered materials, and a calm, contemporary Indian sensibility.",
-      "vision": "To be recognised globally for landmark residences that age with grace and enrich the neighbourhoods they belong to."
-    },
-    "pageHeroes": {
-      "home": {
-        "title": "Architecture that holds the light.",
-        "eyebrow": "KKS Constructions",
-        "copy": "Landmarks of quiet luxury. Residences, gardens, and quiet interiors imagined for a slower kind of city living.",
-        "image": "/images/hero-tower.jpg",
-        "primaryButtonLabel": "View projects",
-        "primaryButtonUrl": "/projects",
-        "secondaryButtonLabel": "Our story",
-        "secondaryButtonUrl": "/about"
-      },
-      "about": {
-        "title": "A quieter idea of grandeur.",
-        "eyebrow": "About Us",
-        "copy": "KKS Constructions is a distinguished developer of ultra-luxury residences and mixed-use sanctuaries across India. We believe in architecture that holds the light, endures across generations, and enriches everyday rituals.",
-        "image": "/images/facade-detail.jpg"
-      },
-      "projects": {
-        "title": "A collection in stone, glass, and garden.",
-        "eyebrow": "Projects",
-        "copy": "Filter by development status or typology, or search by landmark and name.",
-        "image": "/images/aerial-campus.jpg"
-      },
-      "contact": {
-        "title": "We would like to hear from you.",
-        "eyebrow": "Contact Us",
-        "copy": "Reach our private advisory desk for site viewings, portfolio brochures, or bespoke consultation.",
-        "image": "/images/penthouse-terrace.jpg"
-      },
-      "testimonials": {
-        "title": "Reflections on Living Well.",
-        "eyebrow": "Testimonials",
-        "copy": "Notes and experiences from homeowners, architects, and design consultants.",
-        "image": "/images/interior-bedroom.jpg"
-      },
-      "services": {
-        "title": "Services shaped around your home.",
-        "eyebrow": "Our Services",
-        "copy": "Explore the services available to our residents.",
-        "image": "/images/aerial-campus.jpg"
-      },
-      "privacy": {
-        "title": "Privacy Policy",
-        "eyebrow": "Legal",
-        "copy": "Data stewardship and confidentiality principles for our private advisory clients.",
-        "image": "/images/interior-kitchen.jpg"
-      }
-    },
-    "values": [
+    "standards": [
       {
-        "title": "Craft",
-        "text": "Precision in detailing, from podium gardens to the last hand-patinated brass fitting.",
-        "_id": "6ad4c1857c28089ccad52f31"
+        "icon": "Compass",
+        "title": "Contextual Architecture",
+        "text": "Every site dictates its own architectural vocabulary—from natural cross-ventilation to orientation that captures winter warmth and shields harsh summer radiation."
       },
       {
-        "title": "Restraint",
-        "text": "Luxury expressed through proportion, light, and material honesty—not ornament for its own sake.",
-        "_id": "6ad4c1857c28089ccad52f32"
+        "icon": "ShieldCheck",
+        "title": "Rigorous Engineering",
+        "text": "Engineered with seismic-compliant structural frames, post-tensioned slabs, and multi-tier waterproofing that protect the building envelope over generations."
       },
       {
-        "title": "Stewardship",
-        "text": "Landscapes, water systems, and community spaces treated as essential, enduring architecture.",
-        "_id": "6ad4c1857c28089ccad52f33"
-      },
-      {
-        "title": "Transparency",
-        "text": "Unwavering commitment to timelines, RERA disclosures, and dedicated lifetime homeowner aftercare.",
-        "_id": "6ad4c1857c28089ccad52f34"
+        "icon": "Award",
+        "title": "Noble Materiality",
+        "text": "We source authentic natural limestones, fluted granites, aged bronzes, and sustainably harvested woods that age with character rather than decay."
       }
     ],
-    "highlights": [
+    "milestones": [
       {
-        "value": "22+",
-        "label": "Years of practice",
-        "_id": "6ad4c1857c28089ccad52f35"
+        "year": "Phase I",
+        "title": "Founding Philosophy",
+        "desc": "Established with a focus on crafting high-calibre residential sanctuaries away from high-density urban chaos."
       },
       {
-        "value": "1,450+",
-        "label": "Homes delivered",
-        "_id": "6ad4c1857c28089ccad52f36"
+        "year": "Phase II",
+        "title": "Landmark High-Rises",
+        "desc": "Pioneered vertical garden terraces and double-height architectural arrival courts across premier residential corridors."
       },
       {
-        "value": "8",
-        "label": "Projects underway",
-        "_id": "6ad4c1857c28089ccad52f37"
-      },
-      {
-        "value": "4",
-        "label": "Cities of presence",
-        "_id": "6ad4c1857c28089ccad52f38"
+        "year": "Phase III",
+        "title": "Integrated Communities",
+        "desc": "Expanding into low-impact mixed-use developments, wellness-first courtyard villas, and civic green boulevards."
       }
     ],
-    "isPublished": true,
     "faqs": [
       {
         "q": "How can I schedule an exclusive on-site preview?",
@@ -150,26 +72,6 @@
         "a": "Our dedicated NRI client desk provides end-to-end support with documentation, repatriable banking channels, and power-of-attorney protocols."
       }
     ],
-    "homeIntro": {
-      "title": "A quieter idea of grandeur."
-    },
-    "milestones": [
-      {
-        "year": "Phase I",
-        "title": "Founding Philosophy",
-        "desc": "Established with a focus on crafting high-calibre residential sanctuaries away from high-density urban chaos."
-      },
-      {
-        "year": "Phase II",
-        "title": "Landmark High-Rises",
-        "desc": "Pioneered vertical garden terraces and double-height architectural arrival courts across premier residential corridors."
-      },
-      {
-        "year": "Phase III",
-        "title": "Integrated Communities",
-        "desc": "Expanding into low-impact mixed-use developments, wellness-first courtyard villas, and civic green boulevards."
-      }
-    ],
     "pressMentions": [
       {
         "publication": "Architectural Digest India [Concept]",
@@ -184,46 +86,15 @@
         "quote": "Uncompromising attention to privacy, material honesty, and light."
       }
     ],
-    "standards": [
-      {
-        "icon": "Compass",
-        "title": "Contextual Architecture",
-        "text": "Every site dictates its own architectural vocabulary—from natural cross-ventilation to orientation that captures winter warmth and shields harsh summer radiation."
-      },
-      {
-        "icon": "ShieldCheck",
-        "title": "Rigorous Engineering",
-        "text": "Engineered with seismic-compliant structural frames, post-tensioned slabs, and multi-tier waterproofing that protect the building envelope over generations."
-      },
-      {
-        "icon": "Award",
-        "title": "Noble Materiality",
-        "text": "We source authentic natural limestones, fluted granites, aged bronzes, and sustainably harvested woods that age with character rather than decay."
-      }
-    ],
-    "navigationItems": [
-      {
-        "to": "/",
-        "label": "Home"
-      },
-      {
-        "to": "/about",
-        "label": "About Us"
-      },
-      {
-        "to": "/projects",
-        "label": "Projects"
-      },
-      {
-        "to": "/testimonials",
-        "label": "Testimonials"
-      },
-      {
-        "to": "/contact",
-        "label": "Contact Us"
-      }
-    ],
-    "sections": [],
+    "homeIntro": {
+      "image": "/images/lobby-interior.jpg",
+      "imageAlt": "Concept photograph of a double-height residential lobby",
+      "eyebrow": "The house of KKS",
+      "title": "A quieter idea of grandeur.",
+      "copy": "",
+      "buttonLabel": "About KKS Constructions",
+      "buttonUrl": "/about"
+    },
     "pageCopy": {
       "home": {
         "projects": {
@@ -362,7 +233,153 @@
           "paragraph3": "To request access, modification, or permanent deletion of your inquiry data, you may reach our privacy desk directly at"
         }
       }
-    }
+    },
+    "sectionVisibility": {},
+    "pageVisibility": {},
+    "sections": [],
+    "company": {
+      "contact": {
+        "addressLine": "Road No. 36, Jubilee Hills",
+        "city": "Hyderabad, Telangana — 500033",
+        "phone": "6300498028",
+        "email": "enquiries@kksconstructions.com",
+        "hours": "Monday–Saturday, 10:00 AM – 6:30 PM IST",
+        "mapNote": "Private viewing suites available by prior appointment at our Jubilee Hills advisory studio.",
+        "whatsapp": ""
+      },
+      "social": {
+        "instagram": "https://instagram.com",
+        "linkedin": "https://linkedin.com",
+        "youtube": "https://youtube.com"
+      },
+      "disclaimers": {
+        "visuals": "",
+        "legal": "Project specifications, amenities, and floor plans are subject to final municipal clearances and RERA disclosures. This portfolio serves as an architectural presentation."
+      },
+      "name": "KKS Constructions",
+      "shortName": "KKS",
+      "tagline": "We don't just build structures, we build the trust that lasts",
+      "logo": "/images/logo.png",
+      "description": "KKS Constructions is a distinguished developer of ultra-luxury residences and mixed-use sanctuaries across India. We believe in architecture that holds the light, endures across generations, and enriches everyday rituals.",
+      "overview": "We design and deliver elevated living environments where architecture, landscape, and daily ritual meet. From sky mansions in urban financial capitals to secluded coastal courtyard villas, each KKS development is an essay in structural permanence, thermal comfort, and restrained elegance.",
+      "mission": "To create enduring places with rigorous craft, considered materials, and a calm, contemporary Indian sensibility.",
+      "vision": "To be recognised globally for landmark residences that age with grace and enrich the neighbourhoods they belong to."
+    },
+    "pageHeroes": {
+      "home": {
+        "title": "Architecture that holds the light.",
+        "eyebrow": "KKS Constructions",
+        "copy": "Landmarks of quiet luxury. Residences, gardens, and quiet interiors imagined for a slower kind of city living.",
+        "image": "/images/hero-tower.jpg",
+        "primaryButtonLabel": "View projects",
+        "primaryButtonUrl": "/projects",
+        "secondaryButtonLabel": "Our story",
+        "secondaryButtonUrl": "/about"
+      },
+      "about": {
+        "title": "A quieter idea of grandeur.",
+        "eyebrow": "About Us",
+        "copy": "KKS Constructions is a distinguished developer of ultra-luxury residences and mixed-use sanctuaries across India. We believe in architecture that holds the light, endures across generations, and enriches everyday rituals.",
+        "image": "/images/facade-detail.jpg"
+      },
+      "projects": {
+        "title": "A collection in stone, glass, and garden.",
+        "eyebrow": "Projects",
+        "copy": "Filter by development status or typology, or search by landmark and name.",
+        "image": "/images/aerial-campus.jpg"
+      },
+      "contact": {
+        "title": "We would like to hear from you.",
+        "eyebrow": "Contact Us",
+        "copy": "Reach our private advisory desk for site viewings, portfolio brochures, or bespoke consultation.",
+        "image": "/images/penthouse-terrace.jpg"
+      },
+      "testimonials": {
+        "title": "Reflections on Living Well.",
+        "eyebrow": "Testimonials",
+        "copy": "Notes and experiences from homeowners, architects, and design consultants.",
+        "image": "/images/interior-bedroom.jpg"
+      },
+      "services": {
+        "title": "Services shaped around your home.",
+        "eyebrow": "Our Services",
+        "copy": "Explore the services available to our residents.",
+        "image": "/images/aerial-campus.jpg"
+      },
+      "privacy": {
+        "title": "Privacy Policy",
+        "eyebrow": "Legal",
+        "copy": "Data stewardship and confidentiality principles for our private advisory clients.",
+        "image": "/images/interior-kitchen.jpg"
+      }
+    },
+    "values": [
+      {
+        "title": "Craft",
+        "text": "Precision in detailing, from podium gardens to the last hand-patinated brass fitting.",
+        "_id": "6ad4c1857c28089ccad52f31"
+      },
+      {
+        "title": "Restraint",
+        "text": "Luxury expressed through proportion, light, and material honesty—not ornament for its own sake.",
+        "_id": "6ad4c1857c28089ccad52f32"
+      },
+      {
+        "title": "Stewardship",
+        "text": "Landscapes, water systems, and community spaces treated as essential, enduring architecture.",
+        "_id": "6ad4c1857c28089ccad52f33"
+      },
+      {
+        "title": "Transparency",
+        "text": "Unwavering commitment to timelines, RERA disclosures, and dedicated lifetime homeowner aftercare.",
+        "_id": "6ad4c1857c28089ccad52f34"
+      }
+    ],
+    "highlights": [
+      {
+        "value": "22+",
+        "label": "Years of practice",
+        "_id": "6ad4c1857c28089ccad52f35"
+      },
+      {
+        "value": "1,450+",
+        "label": "Homes delivered",
+        "_id": "6ad4c1857c28089ccad52f36"
+      },
+      {
+        "value": "8",
+        "label": "Projects underway",
+        "_id": "6ad4c1857c28089ccad52f37"
+      },
+      {
+        "value": "4",
+        "label": "Cities of presence",
+        "_id": "6ad4c1857c28089ccad52f38"
+      }
+    ],
+    "isPublished": true,
+    "navigationItems": [
+      {
+        "to": "/",
+        "label": "Home"
+      },
+      {
+        "to": "/about",
+        "label": "About Us"
+      },
+      {
+        "to": "/projects",
+        "label": "Projects"
+      },
+      {
+        "to": "/testimonials",
+        "label": "Testimonials"
+      },
+      {
+        "to": "/contact",
+        "label": "Contact Us"
+      }
+    ]
   },
   "projects": [
     {
@@ -372,7 +389,7 @@
       "_id": "6ad4c1867c28089ccad52f3d",
       "slug": "solenne-gardens",
       "name": "Solenne Gardens",
-      "status": "upcoming",
+      "status": "completed",
       "type": "Residential",
       "location": "Kokapet Neopolis, Hyderabad",
       "headline": "A garden-first address, still on the drawing board.",
@@ -414,12 +431,12 @@
         "/images/interior-kitchen.jpg",
         "/uploads/hpuse_1792507992403.jpg"
       ],
-      "featured": true,
+      "featured": false,
       "isPublished": true,
       "sortOrder": 4,
       "__v": 0,
       "createdAt": "2026-10-18T12:54:30.067Z",
-      "updatedAt": "2026-10-20T14:53:21.308Z"
+      "updatedAt": "2026-10-21T11:01:50.959Z"
     },
     {
       "slug": "north-atelier",

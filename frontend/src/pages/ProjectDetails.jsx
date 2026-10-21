@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { statusLabels } from "@data";
-import EnquiryForm from "../components/EnquiryForm";
+import DirectContactSection from "../components/DirectContactSection";
 import { fetchProject, getMediaUrl } from "../lib/api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useSiteContent } from "../context/ContentContext";
@@ -162,10 +162,10 @@ export default function ProjectDetails() {
           {/* Quick Actions */}
           <div className="mt-8 flex flex-wrap gap-4">
             <a
-              href="#enquiry-section"
+              href="#contact-section"
               className="inline-flex items-center gap-2 bg-gold px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:bg-gold-deep hover:text-cream"
             >
-              {enquiryCopy.buttonLabel}
+              Contact Us
             </a>
             {project.brochure && (/^https?:\/\//i.test(project.brochure) || (project.brochure.startsWith("/") && !project.brochure.startsWith("//"))) ? (
               <a href={project.brochure} target="_blank" rel="noreferrer" download className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition">
@@ -185,7 +185,7 @@ export default function ProjectDetails() {
       {brochureRequested && (
         <aside aria-label="Brochure details" className="border-b border-gold/30 bg-gold/10 px-5 py-4 text-center text-xs text-ink">
           <span>
-            {enquiryCopy.brochureNotice.replace("this residence", project.name)}
+            Digital portfolio prepared. For any enquiries or floor plans, please contact us directly through phone, WhatsApp, or Instagram.
           </span>
         </aside>
       )}
@@ -294,7 +294,7 @@ export default function ProjectDetails() {
       </section>
 
       {/* Location & Enquiry Form */}
-      <section id="enquiry-section" className="mx-auto grid max-w-7xl gap-16 px-5 py-24 md:grid-cols-2 md:px-8">
+      <section id="contact-section" className="mx-auto grid max-w-7xl gap-16 px-5 py-24 md:grid-cols-2 md:px-8">
         <div>
           <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">{locationCopy.eyebrow}</p>
           <h2 className="mt-2 font-display text-4xl">{locationCopy.title}</h2>
@@ -319,12 +319,7 @@ export default function ProjectDetails() {
         </div>
 
         <div>
-          <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">{enquiryCopy.eyebrow}</p>
-          <h2 className="mt-2 font-display text-4xl">{enquiryCopy.title}</h2>
-          <p className="mt-3 mb-8 text-sm text-stone">
-            {enquiryCopy.copy.replace("this residence", project.name)}
-          </p>
-          <EnquiryForm projectName={project.name} source={`project-${project.slug}`} submitLabel={enquiryCopy.submitLabel} />
+          <DirectContactSection title={`Inquire About ${project.name}`} />
         </div>
       </section>
       </>}

@@ -72,7 +72,7 @@ export default function AdminLogin() {
             <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold">Owner Portal</p>
             <h1 className="mt-2 font-display text-3xl md:text-4xl text-cream">Sign In to CMS</h1>
             <p className="mt-2 text-xs text-sand/70">
-              Manage website content, residences, and inquiries.
+              Manage website content, residences, and portfolio.
             </p>
           </div>
 

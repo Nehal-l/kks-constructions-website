@@ -71,7 +71,7 @@ export default function AdminOverview({ onTabChange }) {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {/* Projects Card */}
         <div
           onClick={() => onTabChange("projects")}
@@ -111,20 +111,7 @@ export default function AdminOverview({ onTabChange }) {
           </div>
         </div>
 
-        {/* Enquiries Card */}
-        <div
-          onClick={() => onTabChange("enquiries")}
-          className="cursor-pointer border border-sand/40 bg-white p-6 shadow-sm hover:border-gold transition group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[0.68rem] uppercase tracking-[0.24em] text-stone">Inquiries</span>
-            <MessageSquare className="size-5 text-gold-deep group-hover:scale-110 transition-transform" />
-          </div>
-          <p className="mt-4 font-display text-4xl text-ink font-medium">{stats.totalEnquiries}</p>
-          <div className="mt-3 text-xs text-stone border-t border-sand/40 pt-3">
-            Inbound client contact leads
-          </div>
-        </div>
+                {/* Inquiries card temporarily hidden */}
 
         {/* Storage Health */}
         <div className="border border-sand/40 bg-white p-6 shadow-sm">
@@ -176,13 +163,13 @@ export default function AdminOverview({ onTabChange }) {
         </button>
 
         <button
-          onClick={() => onTabChange("enquiries")}
+          onClick={() => onTabChange("sections")}
           className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left"
         >
-          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Customer Leads</span>
-          <h3 className="mt-2 font-display text-xl text-ink">Review Private Inquiries</h3>
+          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Layout</span>
+          <h3 className="mt-2 font-display text-xl text-ink">Manage Page Sections</h3>
           <p className="mt-2 text-xs text-stone">
-            Inspect customer inquiries with name, telephone, email, and requested residence.
+            Toggle visibility and reorder modular sections across all pages.
           </p>
         </button>
       </div>

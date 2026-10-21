@@ -58,7 +58,7 @@ export default function AdminLayout() {
     { key: "content", label: "Website Content", icon: FileText },
     { key: "sections", label: "Page Sections", icon: PanelsTopLeft },
     { key: "page-copy", label: "Page Copy", icon: Pencil },
-    { key: "enquiries", label: "Inquiries", icon: MessageSquare },
+    // Temporarily hidden: { key: "enquiries", label: "Inquiries", icon: MessageSquare },
     { key: "security", label: "Security", icon: ShieldCheck },
   ];
 
@@ -187,7 +187,7 @@ export default function AdminLayout() {
         {activeTab === "content" && <AdminContent />}
         {activeTab === "sections" && <AdminSections />}
         {activeTab === "page-copy" && <AdminPageCopy />}
-        {activeTab === "enquiries" && <AdminEnquiries />}
+        {/* Temporarily hidden: {activeTab === "enquiries" && <AdminEnquiries />} */}
         {activeTab === "security" && <AdminSecurity />}
       </main>
 

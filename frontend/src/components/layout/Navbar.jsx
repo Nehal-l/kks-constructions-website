@@ -78,7 +78,7 @@ export default function Navbar() {
           to={content.footer?.enquiryUrl?.startsWith("/") && !content.footer.enquiryUrl.startsWith("//") ? content.footer.enquiryUrl : "/contact"}
           className="hidden border border-gold/70 px-4 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-gold transition hover:bg-gold hover:text-ink lg:inline-flex"
         >
-          {content.footer?.enquiryLabel || "Enquire"}
+          {content.footer?.enquiryLabel && content.footer.enquiryLabel !== "Enquire" ? content.footer.enquiryLabel : "Contact"}
         </Link>
         <button
           type="button"
@@ -96,7 +96,7 @@ export default function Navbar() {
           <nav className="flex flex-col gap-5" aria-label="Mobile" onClick={() => setOpen(false)}>
             {links.map((link) => <NavigationLink key={`${link.to}-${link.label}`} link={link} mobile />)}
             <Link to="/contact" className="mt-4 text-[0.7rem] uppercase tracking-[0.24em] text-gold">
-              Enquire
+              Contact
             </Link>
           </nav>
         </div>

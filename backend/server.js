@@ -1,19 +1,15 @@
+import "./config/loadEnv.js";
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 import { connectDB, isDbConnected } from "./config/db.js";
 import { configureCloudinary, isCloudinaryReady, localUploadsDir } from "./config/cloudinary.js";
+import { configureMailer } from "./config/mailer.js";
 import { bootstrapSystem } from "./services/datastore.js";
 import authRoutes from "./routes/authRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 const port = Number(process.env.PORT) || 5000;
@@ -92,7 +88,11 @@ app.use("/uploads", express.static(localUploadsDir));
 // Connect to external services & bootstrap initial system data
 async function startServer() {
   await connectDB();
-  configureCloudinary();
+  await configureCloudinary();
+  configureMailer();
+  if (process.env.MONGODB_URI && !isDbConnected()) {
+    throw new Error("MongoDB Atlas URI is configured, but database connection could not be established.");
+  }
   if (process.env.NODE_ENV === "production" && !isDbConnected()) {
     throw new Error("MongoDB Atlas must be reachable in production.");
   }
