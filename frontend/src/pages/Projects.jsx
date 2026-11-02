@@ -194,14 +194,14 @@ export default function Projects() {
         {/* Results status banner */}
         <div className="mt-6 flex items-center justify-between text-xs text-stone">
           <span>
-            Showing <strong className="text-ink">{displayedProjects.length}</strong> {displayedProjects.length === 1 ? "residence" : "residences"}
+            {portfolioCopy.showingLabel || "Showing"} <strong className="text-ink">{displayedProjects.length}</strong> {displayedProjects.length === 1 ? (portfolioCopy.residenceSingularLabel || "residence") : (portfolioCopy.residencesLabel || "residences")}
             {status !== "all" && ` · ${statusLabels[status]}`}
             {type !== "all" && ` · ${type}`}
             {search && ` matching "${search}"`}
           </span>
           {loading ? (
             <span className="text-gold-deep animate-pulse" role="status">
-              Updating list…
+              {portfolioCopy.loadingLabel || "Updating list…"}
             </span>
           ) : null}
         </div>

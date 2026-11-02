@@ -27,6 +27,8 @@ export default function ProjectDetails() {
   const amenitiesCopy = getPageCopy(content, "projectDetails", "amenities");
   const locationCopy = getPageCopy(content, "projectDetails", "location");
   const enquiryCopy = getPageCopy(content, "projectDetails", "enquiry");
+  const portfolioCopy = getPageCopy(content, "projects", "portfolio");
+
   const [project, setProject] = useState(null);
   const [active, setActive] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -39,7 +41,7 @@ export default function ProjectDetails() {
     project?.name || "Project",
     project
       ? `${project.name} — ${project.headline} Concept project page for ${company.name}.`
-      : `Project details · ${company.name}`,
+      : `Project details — ${company.name}`,
   );
 
   useEffect(() => {
@@ -114,215 +116,291 @@ export default function ProjectDetails() {
   if (!project) {
     return (
       <section className="px-5 py-40 text-center">
-        <h1 className="font-display text-4xl">Residence not found</h1>
-        <p className="mt-4 text-stone">{error || "This address is not in the demonstration collection."}</p>
+        <h1 className="font-display text-4xl">{overviewCopy.notFoundTitle || "Residence not found"}</h1>
+        <p className="mt-4 text-stone">{overviewCopy.notFoundCopy || (error || "This address is not in the demonstration collection.")}</p>
         <Link
           to="/projects"
           className="mt-8 inline-flex items-center gap-2 border border-ink px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink hover:bg-ink hover:text-cream"
         >
-          <ArrowLeft className="size-4" /> Back to projects
+          <ArrowLeft className="size-4" /> {enquiryCopy.backLabel || "Back to projects"}
         </Link>
       </section>
     );
   }
 
+  const localizedStatus = {
+    ongoing: portfolioCopy.statusOngoingLabel || "Ongoing",
+    completed: portfolioCopy.statusCompletedLabel || "Completed",
+    upcoming: portfolioCopy.statusUpcomingLabel || "Upcoming",
+  }[project.status] || statusLabels[project.status] || project.status;
+
+  const showGallery = isSectionVisible(content, "project-detail-gallery") && isSectionVisible(content, "project-detail-content");
+  const showOverview = isSectionVisible(content, "project-detail-overview") && isSectionVisible(content, "project-detail-content");
+  const showShowcase = showGallery || showOverview;
+
   return (
     <>
       <PageSections page="projectDetails" placement="top" />
-      {/* Hero Header */}
-      {isSectionVisible(content, "project-detail-hero") && <section className="relative isolate min-h-[75vh] bg-ink text-cream">
-        <img
-          src={getMediaUrl(project.cover)}
-          alt={`Concept banner for ${project.name}`}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30" />
-        <div className="relative mx-auto flex min-h-[75vh] max-w-7xl flex-col justify-end px-5 pb-16 pt-32 md:px-8">
-          <Link
-            to="/projects"
-            className="mb-8 inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.26em] text-gold hover:text-cream transition w-fit"
-          >
-            <ArrowLeft className="size-3.5" /> {enquiryCopy.backLabel}
-          </Link>
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="border border-gold/50 bg-ink/40 px-3 py-1 text-[0.62rem] uppercase tracking-[0.24em] text-cream backdrop-blur-sm">
-              {{ ongoing: getPageCopy(content, "projects", "portfolio").statusOngoingLabel, completed: getPageCopy(content, "projects", "portfolio").statusCompletedLabel, upcoming: getPageCopy(content, "projects", "portfolio").statusUpcomingLabel }[project.status] || statusLabels[project.status]}
-            </span>
-            <span className="text-[0.68rem] uppercase tracking-[0.24em] text-gold">
-              {project.type} · {project.location}
-            </span>
-          </div>
-          <h1 className="mt-4 font-display text-5xl md:text-7xl lg:text-8xl leading-none">
-            {project.name}
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-sand/85 leading-relaxed font-light">
-            {project.headline}
-          </p>
 
-          {/* Quick Actions */}
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="#contact-section"
-              className="inline-flex items-center gap-2 bg-gold px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:bg-gold-deep hover:text-cream"
+      {/* Hero Header */}
+      {isSectionVisible(content, "project-detail-hero") && (
+        <section className="relative isolate min-h-[75vh] bg-ink text-cream">
+          <img
+            src={getMediaUrl(project.cover)}
+            alt={`Concept banner for ${project.name}`}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30" />
+          <div className="relative mx-auto flex min-h-[75vh] max-w-7xl flex-col justify-end px-5 pb-16 pt-32 md:px-8">
+            <Link
+              to="/projects"
+              className="mb-8 inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.26em] text-gold hover:text-cream transition w-fit"
             >
-              Contact Us
-            </a>
-            {project.brochure && (/^https?:\/\//i.test(project.brochure) || (project.brochure.startsWith("/") && !project.brochure.startsWith("//"))) ? (
-              <a href={project.brochure} target="_blank" rel="noreferrer" download className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition">
-                <Download className="size-3.5" /> {enquiryCopy.brochureLabel}
+              <ArrowLeft className="size-3.5" /> {enquiryCopy.backLabel || "Back to projects"}
+            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="border border-gold/50 bg-ink/40 px-3 py-1 text-[0.62rem] uppercase tracking-[0.24em] text-cream backdrop-blur-sm">
+                {localizedStatus}
+              </span>
+              <span className="text-[0.68rem] uppercase tracking-[0.24em] text-gold">
+                {project.type} — {project.location}
+              </span>
+            </div>
+            <h1 className="mt-4 font-display text-5xl md:text-7xl lg:text-8xl leading-none">
+              {project.name}
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg text-sand/85 leading-relaxed font-light">
+              {project.headline}
+            </p>
+
+            {/* Quick Actions */}
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a
+                href="#contact-section"
+                className="inline-flex items-center gap-2 bg-gold px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:bg-gold-deep hover:text-cream"
+              >
+                {enquiryCopy.contactButtonLabel || "Contact Us"}
               </a>
-            ) : (
-              <button type="button" onClick={() => setBrochureRequested(true)} className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition">
-                <Download className="size-3.5" />
-                {brochureRequested ? enquiryCopy.brochureReadyLabel : enquiryCopy.brochureRequestLabel}
-              </button>
-            )}
+              {project.brochure && (/^https?:\/\//i.test(project.brochure) || (project.brochure.startsWith("/") && !project.brochure.startsWith("//"))) ? (
+                <a
+                  href={project.brochure}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition"
+                >
+                  <Download className="size-3.5" /> {enquiryCopy.brochureLabel}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setBrochureRequested(true)}
+                  className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition"
+                >
+                  <Download className="size-3.5" />
+                  {brochureRequested ? enquiryCopy.brochureReadyLabel : enquiryCopy.brochureRequestLabel}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      </section>}
+        </section>
+      )}
 
       {/* Brochure notification alert if clicked */}
       {brochureRequested && (
         <aside aria-label="Brochure details" className="border-b border-gold/30 bg-gold/10 px-5 py-4 text-center text-xs text-ink">
           <span>
-            Digital portfolio prepared. For any enquiries or floor plans, please contact us directly through phone, WhatsApp, or Instagram.
+            {enquiryCopy.brochureNotice || "Digital portfolio prepared. For any enquiries or floor plans, please contact us directly through phone, WhatsApp, or Instagram."}
           </span>
         </aside>
       )}
 
-      {isSectionVisible(content, "project-detail-content") && <>
       {/* Main Showcase: Gallery & Overview Specs */}
-      <section className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1.3fr_0.9fr] md:px-8">
-        <div>
-          {/* Active Featured Image with Expand Trigger */}
-          <div className="group relative overflow-hidden bg-ink cursor-pointer" onClick={() => openLightbox(project.gallery.indexOf(active))}>
-            <img
-              src={getMediaUrl(active)}
-              alt={`Gallery view of ${project.name}`}
-              className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-102"
-            />
-            <div className="absolute inset-0 bg-ink/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span className="flex items-center gap-2 bg-ink/80 px-4 py-2 text-xs uppercase tracking-widest text-cream backdrop-blur-sm">
-                <Eye className="size-4 text-gold" /> {enquiryCopy.expandLabel}
-              </span>
-            </div>
-          </div>
-
-          {/* Thumbnails */}
-          <div className="mt-3 grid grid-cols-5 gap-2">
-            {project.gallery.map((image, idx) => (
-              <button
-                key={image}
-                type="button"
-                onClick={() => {
-                  setActive(image);
-                }}
-                className={`overflow-hidden border transition ${
-                  active === image ? "border-gold ring-1 ring-gold" : "border-transparent opacity-75 hover:opacity-100"
-                }`}
-                aria-label={`Thumbnail ${idx + 1}`}
+      {showShowcase && (
+        <section className={`mx-auto grid max-w-7xl gap-12 px-5 py-20 md:px-8 ${
+          showGallery && showOverview ? "lg:grid-cols-[1.3fr_0.9fr]" : "grid-cols-1"
+        }`}>
+          {/* Gallery Column */}
+          {showGallery && (
+            <div>
+              {/* Active Featured Image with Expand Trigger */}
+              <div
+                className="group relative overflow-hidden bg-ink cursor-pointer"
+                onClick={() => openLightbox(project.gallery.indexOf(active))}
               >
-                <img src={getMediaUrl(image)} alt="" className="aspect-square w-full object-cover" />
-              </button>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-stone">{company.disclaimers.visuals}</p>
-        </div>
-
-        {/* Overview & Specs Column */}
-        <aside className="flex flex-col justify-between">
-          <div>
-            <p className="text-[0.68rem] uppercase tracking-[0.24em] text-gold-deep">
-              {project.location}
-            </p>
-            <h2 className="mt-3 font-display text-4xl">{overviewCopy.title}</h2>
-            <p className="mt-5 leading-relaxed text-stone text-base">{project.overview}</p>
-            {project.price && <p className="mt-5 text-sm"><span className="text-stone">{overviewCopy.priceLabel}: </span><strong className="text-ink">{project.price}</strong></p>}
-
-            <dl className="mt-8 divide-y divide-sand/70 border-t border-b border-sand/70">
-              {project.specs.map((spec) => (
-                <div key={spec.label} className="flex justify-between py-3.5 text-sm">
-                  <dt className="text-stone">{spec.label}</dt>
-                  <dd className="font-medium text-ink">{spec.value}</dd>
+                <img
+                  src={getMediaUrl(active)}
+                  alt={`Gallery view of ${project.name}`}
+                  className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-102"
+                />
+                <div className="absolute inset-0 bg-ink/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="flex items-center gap-2 bg-ink/80 px-4 py-2 text-xs uppercase tracking-widest text-cream backdrop-blur-sm">
+                    <Eye className="size-4 text-gold" /> {enquiryCopy.expandLabel || "Expand view"}
+                  </span>
                 </div>
-              ))}
-            </dl>
-          </div>
-
-          <div className="mt-8 border border-sand bg-white/60 p-6">
-            <div className="flex items-start gap-4">
-              <FileText className="size-6 text-gold-deep shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-display text-xl text-ink">{overviewCopy.specsTitle}</h4>
-                <p className="mt-1 text-xs text-stone leading-relaxed">{overviewCopy.specsCopy}</p>
               </div>
-            </div>
-          </div>
-        </aside>
-      </section>
 
-      {project.videos?.length > 0 && (
+              {/* Thumbnails */}
+              {project.gallery?.length > 1 && (
+                <div className="mt-3 grid grid-cols-5 gap-2">
+                  {project.gallery.map((image, idx) => (
+                    <button
+                      key={image}
+                      type="button"
+                      onClick={() => setActive(image)}
+                      className={`overflow-hidden border transition ${
+                        active === image ? "border-gold ring-1 ring-gold" : "border-transparent opacity-75 hover:opacity-100"
+                      }`}
+                      aria-label={`Thumbnail ${idx + 1}`}
+                    >
+                      <img src={getMediaUrl(image)} alt="" className="aspect-square w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+              {company.disclaimers?.visuals && (
+                <p className="mt-4 text-xs text-stone">{company.disclaimers.visuals}</p>
+              )}
+            </div>
+          )}
+
+          {/* Overview & Specs Column */}
+          {showOverview && (
+            <aside className="flex flex-col justify-between">
+              <div>
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-gold-deep">
+                  {project.location}
+                </p>
+                <h2 className="mt-3 font-display text-4xl">{overviewCopy.title || "Architectural Overview"}</h2>
+                <p className="mt-5 leading-relaxed text-stone text-base">{project.overview}</p>
+                {project.price && (
+                  <p className="mt-5 text-sm">
+                    <span className="text-stone">{overviewCopy.priceLabel || "Price guidance"}: </span>
+                    <strong className="text-ink">{project.price}</strong>
+                  </p>
+                )}
+
+                {project.specs?.length > 0 && (
+                  <dl className="mt-8 divide-y divide-sand/70 border-t border-b border-sand/70">
+                    {project.specs.map((spec) => (
+                      <div key={spec.label} className="flex justify-between py-3.5 text-sm">
+                        <dt className="text-stone">{spec.label}</dt>
+                        <dd className="font-medium text-ink">{spec.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+
+              {(overviewCopy.specsTitle || overviewCopy.specsCopy) && (
+                <div className="mt-8 border border-sand bg-white/60 p-6">
+                  <div className="flex items-start gap-4">
+                    <FileText className="size-6 text-gold-deep shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-display text-xl text-ink">{overviewCopy.specsTitle}</h4>
+                      <p className="mt-1 text-xs text-stone leading-relaxed">{overviewCopy.specsCopy}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </aside>
+          )}
+        </section>
+      )}
+
+      {/* Videos Section */}
+      {isSectionVisible(content, "project-detail-videos") && project.videos?.length > 0 && (
         <section className="mx-auto max-w-7xl px-5 py-16 md:px-8">
-          <h2 className="font-display text-4xl">{videosCopy.title}</h2>
+          <h2 className="font-display text-4xl">{videosCopy.title || "Project Films"}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            {project.videos.map((url) => /^https?:\/\//i.test(url) || (url.startsWith("/") && !url.startsWith("//")) ? (
-              <video key={url} controls preload="metadata" src={url} className="w-full bg-ink">Your browser does not support video playback.</video>
-            ) : null)}
+            {project.videos.map((url) =>
+              /^https?:\/\//i.test(url) || (url.startsWith("/") && !url.startsWith("//")) ? (
+                <video key={url} controls preload="metadata" src={url} className="w-full bg-ink">
+                  Your browser does not support video playback.
+                </video>
+              ) : null
+            )}
           </div>
         </section>
       )}
 
       {/* Amenities Section */}
-      <section className="bg-sand/35 py-20">
-        <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">{amenitiesCopy.eyebrow}</p>
-          <h2 className="mt-2 font-display text-4xl">{amenitiesCopy.title}</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {project.amenities.map((item) => (
-              <div
-                key={item}
-                className="border border-sand bg-cream p-5 text-sm transition hover:border-gold hover:shadow-sm"
-              >
-                <span className="block text-[0.62rem] uppercase tracking-[0.22em] text-gold-deep mb-1">
-                  {amenitiesCopy.itemLabel}
-                </span>
-                <span className="font-medium text-ink">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Location & Enquiry Form */}
-      <section id="contact-section" className="mx-auto grid max-w-7xl gap-16 px-5 py-24 md:grid-cols-2 md:px-8">
-        <div>
-          <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">{locationCopy.eyebrow}</p>
-          <h2 className="mt-2 font-display text-4xl">{locationCopy.title}</h2>
-          <p className="mt-5 leading-relaxed text-stone text-base">{project.locationNotes}</p>
-
-          <div className="mt-8 border border-sand bg-white/60 p-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <MapPin className="size-5 text-gold-deep shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs uppercase tracking-widest text-ink font-medium">{overviewCopy.mapLabel}</p>
-                <p className="mt-1 text-xs text-stone">{project.location}</p>
-                <p className="mt-2 text-xs text-stone/80">{company.contact.mapNote}</p>
-              </div>
+      {isSectionVisible(content, "project-detail-amenities") && project.amenities?.length > 0 && (
+        <section className="bg-sand/35 py-20">
+          <div className="mx-auto max-w-7xl px-5 md:px-8">
+            <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">
+              {amenitiesCopy.eyebrow || "Lifestyle"}
+            </p>
+            <h2 className="mt-2 font-display text-4xl">{amenitiesCopy.title || "Curated Amenities & Facilities"}</h2>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {project.amenities.map((item) => (
+                <div
+                  key={item}
+                  className="border border-sand bg-cream p-5 text-sm transition hover:border-gold hover:shadow-sm"
+                >
+                  <span className="block text-[0.62rem] uppercase tracking-[0.22em] text-gold-deep mb-1">
+                    {amenitiesCopy.itemLabel || "Private Amenity"}
+                  </span>
+                  <span className="font-medium text-ink">{item}</span>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
+      )}
 
-          <div className="mt-6 border-l-2 border-gold pl-5 py-2">
-            <p className="text-xs text-stone italic">
-              {locationCopy.callout}
-            </p>
-          </div>
-        </div>
+      {/* Location & Enquiry Form Section */}
+      {(isSectionVisible(content, "project-detail-location") || isSectionVisible(content, "project-detail-contact")) && (
+        <section id="contact-section" className={`mx-auto grid max-w-7xl gap-16 px-5 py-24 md:px-8 ${
+          isSectionVisible(content, "project-detail-location") && isSectionVisible(content, "project-detail-contact")
+            ? "lg:grid-cols-2"
+            : "grid-cols-1"
+        }`}>
+          {/* Location Info */}
+          {isSectionVisible(content, "project-detail-location") && (
+            <div>
+              <p className="text-[0.68rem] uppercase tracking-[0.3em] text-gold-deep">
+                {locationCopy.eyebrow || "Neighbourhood"}
+              </p>
+              <h2 className="mt-2 font-display text-4xl">{locationCopy.title || "The Setting"}</h2>
+              {project.locationNotes && (
+                <p className="mt-5 leading-relaxed text-stone text-base">{project.locationNotes}</p>
+              )}
 
-        <div>
-          <DirectContactSection title={`Inquire About ${project.name}`} />
-        </div>
-      </section>
-      </>}
+              <div className="mt-8 border border-sand bg-white/60 p-6 space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="size-5 text-gold-deep shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-ink font-medium">
+                      {overviewCopy.mapLabel || "Prime Location"}
+                    </p>
+                    <p className="mt-1 text-xs text-stone">{project.location}</p>
+                    {company.contact?.mapNote && (
+                      <p className="mt-2 text-xs text-stone/80">{company.contact.mapNote}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {locationCopy.callout && (
+                <div className="mt-6 border-l-2 border-gold pl-5 py-2">
+                  <p className="text-xs text-stone italic">
+                    {locationCopy.callout}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Direct Consultation Card */}
+          {isSectionVisible(content, "project-detail-contact") && (
+            <div>
+              <DirectContactSection title={`Inquire About ${project.name}`} />
+            </div>
+          )}
+        </section>
+      )}
+
       <PageSections page="projectDetails" />
 
       {/* Full Screen Lightbox Modal */}
@@ -367,7 +445,7 @@ export default function ProjectDetails() {
             />
             <div className="mt-4 flex items-center gap-4 text-xs text-sand/70 tracking-widest uppercase">
               <span>{project.name}</span>
-              <span>·</span>
+              <span>—</span>
               <span>
                 {lightboxIndex + 1} of {project.gallery.length}
               </span>

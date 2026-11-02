@@ -390,21 +390,42 @@ export const pageContentDefaults = {
       milestones: { eyebrow: "Evolution", title: "Milestones of Excellence", buttonLabel: "Explore our residences", buttonUrl: "/projects" },
     },
     projects: {
-      portfolio: { eyebrow: "Portfolio", title: "Residences", statusLabel: "Status", typeLabel: "Typology", searchPlaceholder: "Search by name, city...", emptyTitle: "No residences match your criteria", emptyCopy: "Try adjusting your status filter, typology selection, or search keywords.", resetLabel: "Reset all filters", statusAllLabel: "All", statusOngoingLabel: "Ongoing", statusCompletedLabel: "Completed", statusUpcomingLabel: "Upcoming", typeAllLabel: "All Typologies", typeResidentialLabel: "Residential", typeVillasLabel: "Villas", typeMixedUseLabel: "Mixed-use" },
+      portfolio: { eyebrow: "Portfolio", title: "Residences", statusLabel: "Status", typeLabel: "Typology", searchPlaceholder: "Search by name, city...", emptyTitle: "No residences match your criteria", emptyCopy: "Try adjusting your status filter, typology selection, or search keywords.", resetLabel: "Reset all filters", statusAllLabel: "All", statusOngoingLabel: "Ongoing", statusCompletedLabel: "Completed", statusUpcomingLabel: "Upcoming", typeAllLabel: "All Typologies", typeResidentialLabel: "Residential", typeVillasLabel: "Villas", typeMixedUseLabel: "Mixed-use", showingLabel: "Showing", residencesLabel: "residences", loadingLabel: "Updating list..." },
+    },
+    services: {
+      servicesList: {
+        eyebrow: "Our Capabilities",
+        title: "Disciplines of Architectural Practice",
+        copy: "From visionary masterplanning to meticulous interior detailing and lifelong aftercare, our multidisciplinary team delivers spaces of enduring quiet luxury.",
+        service1Title: "Architectural Masterplanning", service1Category: "Spatial Design", service1Desc: "Holistic site analysis, passive solar orientation, natural ventilation corridors, and iconic structural geometry engineered for longevity.",
+        service2Title: "Bespoke Interior Architecture", service2Category: "Interior Craft", service2Desc: "Custom stonework, hand-patinated metal detailing, acoustic wall assemblies, and private sanctuaries designed for sensorial calm.",
+        service3Title: "Landscape & Botanical Design", service3Category: "Environment", service3Desc: "Indigenous biophilic environments, reflecting lotus courts, stepped terrace gardens, and water-harvesting microclimates.",
+        service4Title: "Construction Management & Engineering", service4Category: "Execution", service4Desc: "Zero-tolerance engineering precision, seismic resistance, thermal glazing benchmarks, and transparent execution schedules.",
+        service5Title: "Private Advisory & Acquisitions", service5Category: "Client Advisory", service5Desc: "Discreet advisory for bespoke acquisitions, customized floor plans, private site viewings, and confidential transaction management.",
+        service6Title: "Homeowner Aftercare Stewardship", service6Category: "Continuity", service6Desc: "Lifetime homeowner concierge, preventative maintenance regimens, MEP audits, and dedicated asset preservation.",
+      },
+      servicesCta: {
+        eyebrow: "Begin an Engagement",
+        title: "Commission a Private Advisory Consultation",
+        copy: "Whether acquiring a signature residence or discussing a bespoke development commission, our private office is at your service.",
+        buttonLabel: "Contact Advisory Desk",
+        buttonUrl: "/contact",
+      },
     },
     contact: {
-      details: { eyebrow: "Advisory Office", title: "Studio & Concierge", inquiryEyebrow: "Private Inquiries", inquiryTitle: "Send a Message", inquiryCopy: "All submitted enquiries are received by our concierge and recorded in the management portal.", whatsappTitle: "Instant Advisory", whatsappCopy: "Connect directly with an authorized sales advisor via WhatsApp or phone consultation for fast responses.", whatsappButtonLabel: "Chat on WhatsApp", submitLabel: "Send enquiry" },
+      details: { eyebrow: "Advisory Office", title: "Studio & Concierge", phoneLabel: "Telephone", emailLabel: "Direct Email", hoursLabel: "Advisory Hours", inquiryEyebrow: "Private Inquiries", inquiryTitle: "Send a Message", inquiryCopy: "All submitted enquiries are received by our concierge and recorded in the management portal.", whatsappTitle: "Instant Advisory", whatsappCopy: "Connect directly with an authorized sales advisor via WhatsApp or phone consultation for fast responses.", whatsappButtonLabel: "Chat on WhatsApp", submitLabel: "Send enquiry" },
+      privateDesk: { eyebrow: "Direct Contact", title: "Private Advisory Desk", description: "For any enquiries, please contact us directly through phone, WhatsApp, or Instagram.", phoneLabel: "Phone", whatsappLabel: "WhatsApp", instagramLabel: "Instagram", hoursPrefix: "Advisory Desk:", cityFallback: "Hyderabad, India", instagramPlaceholder: "@[YOUR_INSTAGRAM_HANDLE]" },
       faq: { eyebrow: "Buyer Information", title: "Frequently Asked Questions" },
     },
     testimonials: {
       recognition: { eyebrow: "Recognition", title: "Critical Acclaim & Features", bottomCopy: "Interested in speaking with our homeowner relations team or requesting client references?", buttonLabel: "Contact Homeowner Relations", buttonUrl: "/contact" },
     },
     projectDetails: {
-      overview: { title: "Architectural Overview", priceLabel: "Price guidance", specsTitle: "Bespoke Specifications", specsCopy: "Every home is finished with sustainable thermal glazing, Italian marble floorings, European sanitaryware, and smart home lighting integrations.", mapLabel: "Prime Location" },
+      overview: { title: "Architectural Overview", priceLabel: "Price guidance", specsTitle: "Bespoke Specifications", specsCopy: "Every home is finished with sustainable thermal glazing, Italian marble floorings, European sanitaryware, and smart home lighting integrations.", mapLabel: "Prime Location", notFoundTitle: "Residence not found", notFoundCopy: "This address is not in the demonstration collection." },
       videos: { title: "Project Films" },
       amenities: { eyebrow: "Lifestyle", title: "Curated Amenities & Facilities", itemLabel: "Private Amenity" },
       location: { eyebrow: "Neighbourhood", title: "The Setting", callout: "A residence here means immediate access to financial corridors, international schools, and serene lakeside greenways." },
-      enquiry: { eyebrow: "Inquire", title: "Begin Your Acquisition", copy: "Register your interest in this residence to receive full floor plans, pricing briefs, and private viewing schedules.", buttonLabel: "Schedule Private Viewing", brochureLabel: "Download Brochure", brochureRequestLabel: "Request Brochure", brochureReadyLabel: "Brochure Ready Below", brochureNotice: "Digital portfolio prepared. Submit the enquiry form below with your email to receive direct floor plans and documentation.", backLabel: "Back to collection", expandLabel: "Expand view", submitLabel: "Send enquiry" },
+      enquiry: { eyebrow: "Inquire", title: "Begin Your Acquisition", copy: "Register your interest in this residence to receive full floor plans, pricing briefs, and private viewing schedules.", buttonLabel: "Schedule Private Viewing", contactButtonLabel: "Contact Us", brochureLabel: "Download Brochure", brochureRequestLabel: "Request Brochure", brochureReadyLabel: "Brochure Ready Below", brochureNotice: "Digital portfolio prepared. For any enquiries or floor plans, please contact us directly through phone, WhatsApp, or Instagram.", backLabel: "Back to collection", expandLabel: "Expand view", submitLabel: "Send enquiry" },
     },
     privacy: {
       body: {

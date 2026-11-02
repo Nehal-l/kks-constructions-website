@@ -45,9 +45,11 @@ const managedSectionIds = new Set([
   "home-hero", "home-intro", "home-highlights", "home-projects", "home-testimonials", "home-contact",
   "about-hero", "about-story", "about-mission-vision", "about-standards", "about-values", "about-milestones",
   "projects-hero", "projects-list",
-  "contact-hero", "contact-details", "contact-faq",
+  "services-hero", "services-list", "services-cta",
+  "contact-hero", "contact-details", "contact-private-desk", "contact-faq",
   "testimonials-hero", "testimonials-list", "testimonials-recognition",
-  "services-hero", "privacy-hero", "privacy-content", "project-detail-hero", "project-detail-content",
+  "privacy-hero", "privacy-content",
+  "project-detail-hero", "project-detail-overview", "project-detail-gallery", "project-detail-videos", "project-detail-amenities", "project-detail-location", "project-detail-contact", "project-detail-content",
 ]);
 const projectFields = new Set([
   "name", "slug", "status", "type", "location", "price", "headline", "summary",

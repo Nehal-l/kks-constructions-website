@@ -8,6 +8,7 @@ import { useSiteContent } from "../context/ContentContext";
 import PageSections from "../components/PageSections";
 import { getPageCopy, isSectionVisible } from "../lib/content";
 import { getMediaUrl } from "../lib/api";
+import { pageContentDefaults } from "@data";
 
 export default function About() {
   const { content } = useSiteContent();
@@ -18,9 +19,9 @@ export default function About() {
     title: "A quieter idea of grandeur.",
     copy: company.description,
   };
-  const values = content?.values || company.values || [];
-  const standards = content?.standards || [];
-  const milestones = content?.milestones || [];
+  const values = content?.values?.length ? content.values : (company.values || []);
+  const standards = content?.standards?.length ? content.standards : (pageContentDefaults.standards || []);
+  const milestones = content?.milestones?.length ? content.milestones : (pageContentDefaults.milestones || []);
   const icons = { Compass, ShieldCheck, Award };
   const storyCopy = getPageCopy(content, "about", "story");
   const missionVisionCopy = getPageCopy(content, "about", "missionVision");
@@ -46,7 +47,7 @@ export default function About() {
           <SectionHeading
             eyebrow={storyCopy.eyebrow}
             title={storyCopy.title.replace("KKS", company.shortName || "KKS")}
-            copy={company.overview}
+            copy={storyCopy.copy || company.overview}
           />
           <div className="mt-8 border-l border-gold pl-6 text-sm text-stone italic">
             {storyCopy.quote}

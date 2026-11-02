@@ -1,38 +1,54 @@
 import { Phone, ArrowUpRight } from "lucide-react";
 import { useSiteContent } from "../context/ContentContext";
+import { getPageCopy } from "../lib/content";
 
 /**
  * Professional direct contact component.
  * Displays direct communication channels (Phone, WhatsApp, Instagram).
+ * All labels and text are fully editable through the CMS admin portal.
  */
-export default function DirectContactSection({ title = "Direct Consultation" }) {
+export default function DirectContactSection({ title }) {
   const { content } = useSiteContent();
   const company = content?.company || {};
 
-  // Configurable contact details from existing content / configuration
+  // All text is now driven from the CMS (pageCopy.contact.privateDesk)
+  const copy = getPageCopy(content, "contact", "privateDesk");
+
+  // Resolve title: prefer CMS copy, then the prop override, then the CMS default
+  const cardTitle = title || copy.title || "Private Advisory Desk";
+  const eyebrow = copy.eyebrow || "Direct Contact";
+  const description = copy.description || "For any enquiries, please contact us directly through phone, WhatsApp, or Instagram.";
+  const phoneLabel = copy.phoneLabel || "Phone";
+  const whatsappLabel = copy.whatsappLabel || "WhatsApp";
+  const instagramLabel = copy.instagramLabel || "Instagram";
+  const hoursPrefix = copy.hoursPrefix || "Advisory Desk:";
+  const cityFallback = copy.cityFallback || "Hyderabad, India";
+  const instagramPlaceholder = copy.instagramPlaceholder || "@[YOUR_INSTAGRAM_HANDLE]";
+
+  // Configurable contact details from CMS company section
   const phone = company.contact?.phone || "+91 98490 12345";
   const whatsapp = company.contact?.whatsapp || phone || "+91 98490 12345";
   const cleanPhone = phone.replace(/[^0-9+]/g, "");
   const cleanWhatsApp = whatsapp.replace(/[^0-9]/g, "");
 
-  // Instagram: uses existing configured social link if provided, otherwise a clearly marked placeholder
+  // Instagram: uses configured social link if provided, otherwise the CMS placeholder
   const rawInstagram = company.social?.instagram;
   const isCustomInstagram = rawInstagram && rawInstagram !== "https://instagram.com" && rawInstagram.trim() !== "";
   const instagramUrl = isCustomInstagram
     ? rawInstagram
-    : "https://instagram.com/[YOUR_INSTAGRAM_HANDLE]";
+    : `https://instagram.com/${instagramPlaceholder.replace(/^@/, "")}`;
 
   const instagramDisplay = isCustomInstagram
     ? `@${rawInstagram.replace(/\/$/, "").split("/").pop()}`
-    : "@[YOUR_INSTAGRAM_HANDLE]";
+    : instagramPlaceholder;
 
   return (
     <div className="border border-sand bg-white/70 p-8 md:p-10 shadow-sm space-y-6">
       <div>
-        <span className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep font-medium">Direct Contact</span>
-        <h3 className="mt-2 font-display text-3xl text-ink font-normal">{title}</h3>
+        <span className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep font-medium">{eyebrow}</span>
+        <h3 className="mt-2 font-display text-3xl text-ink font-normal">{cardTitle}</h3>
         <p className="mt-4 text-stone leading-relaxed text-base font-light">
-          For any enquiries, please contact us directly through phone, WhatsApp, or Instagram.
+          {description}
         </p>
       </div>
 
@@ -49,7 +65,7 @@ export default function DirectContactSection({ title = "Direct Consultation" }) 
             <ArrowUpRight className="size-4 text-stone group-hover:text-gold transition" />
           </div>
           <div className="mt-4">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">Phone</p>
+            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">{phoneLabel}</p>
             <p className="mt-1 text-sm font-medium text-ink group-hover:text-gold transition">{phone}</p>
           </div>
         </a>
@@ -68,7 +84,7 @@ export default function DirectContactSection({ title = "Direct Consultation" }) 
             <ArrowUpRight className="size-4 text-stone group-hover:text-gold transition" />
           </div>
           <div className="mt-4">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">WhatsApp</p>
+            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">{whatsappLabel}</p>
             <p className="mt-1 text-sm font-medium text-ink group-hover:text-gold transition">{whatsapp}</p>
           </div>
         </a>
@@ -87,15 +103,15 @@ export default function DirectContactSection({ title = "Direct Consultation" }) 
             <ArrowUpRight className="size-4 text-stone group-hover:text-gold transition" />
           </div>
           <div className="mt-4">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">Instagram</p>
+            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-stone">{instagramLabel}</p>
             <p className="mt-1 text-sm font-medium text-ink group-hover:text-gold transition">{instagramDisplay}</p>
           </div>
         </a>
       </div>
 
       <div className="border-t border-sand/40 pt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-stone">
-        <span>Advisory Desk: {company.contact?.hours || "Monday–Saturday, 10:00 AM – 6:30 PM IST"}</span>
-        <span>{company.contact?.city || "Hyderabad, India"}</span>
+        <span>{hoursPrefix} {company.contact?.hours || "Monday–Saturday, 10:00 AM – 6:30 PM IST"}</span>
+        <span>{company.contact?.city || cityFallback}</span>
       </div>
     </div>
   );
@@ -119,4 +135,3 @@ function InstagramIcon({ className = "size-5" }) {
     </svg>
   );
 }
-

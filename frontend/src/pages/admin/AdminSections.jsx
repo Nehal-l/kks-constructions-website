@@ -4,29 +4,9 @@ import { getMediaUrl, fetchAdminContent, updateAdminContent, uploadAdminImage } 
 import { useSiteContent } from "../../context/ContentContext";
 import { PageSectionPreview } from "../../components/PageSections";
 import { navLinks as defaultNavLinks } from "@data";
+import { managedSections, essentialSections, cmsPages as pages } from "../../lib/cmsSectionConfig";
 
-const pages = ["home", "about", "projects", "services", "contact", "testimonials", "privacy", "projectDetails"];
 const types = ["text", "image", "gallery", "callout", "cta", "quote", "video"];
-const managedSections = {
-  home: [
-    ["home-hero", "Main hero"], ["home-intro", "Company introduction"],
-    ["home-highlights", "Highlights"], ["home-projects", "Featured projects"],
-    ["home-testimonials", "Testimonials"], ["home-contact", "Contact call-to-action"],
-  ],
-  about: [
-    ["about-hero", "Page banner"],
-    ["about-story", "Company story"], ["about-mission-vision", "Mission and vision"],
-    ["about-standards", "Construction standards"], ["about-values", "Core values"],
-    ["about-milestones", "Milestones"],
-  ],
-  projects: [["projects-hero", "Page banner"], ["projects-list", "Project portfolio"]],
-  contact: [["contact-hero", "Page banner"], ["contact-details", "Contact and enquiry form"], ["contact-faq", "Frequently asked questions"]],
-  testimonials: [["testimonials-hero", "Page banner"], ["testimonials-list", "Testimonial list"], ["testimonials-recognition", "Recognition"]],
-  services: [["services-hero", "Page banner"]],
-  privacy: [["privacy-hero", "Page banner"], ["privacy-content", "Privacy policy"]],
-  projectDetails: [["project-detail-content", "Residence details"]],
-};
-const essentialSections = new Set(["home-hero", "projects-list", "contact-details"]);
 const blankSection = (page, sortOrder) => ({
   id: `section_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
   page,
@@ -201,7 +181,7 @@ export default function AdminSections() {
             <label key={item} className="inline-flex items-center gap-2 text-xs capitalize text-stone">
               <input
                 type="checkbox"
-                disabled={["home", "projects", "contact"].includes(item)}
+                
                 checked={content.pageVisibility?.[item] !== false}
                 onChange={(event) => setContent((current) => ({
                   ...current,

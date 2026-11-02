@@ -3,34 +3,7 @@ import { ArrowDown, ArrowUp, ImagePlus, Plus, Save, Trash2 } from "lucide-react"
 import { pageContentDefaults, navLinks as defaultNavLinks } from "@data";
 import { useSiteContent } from "../../context/ContentContext";
 import { fetchAdminContent, updateAdminContent, uploadAdminImage, getMediaUrl } from "../../lib/api";
-
-const collections = [
-  { key: "standards", title: "About page standards", fields: [["icon", "Icon key"], ["title", "Heading"], ["text", "Description"]] },
-  { key: "milestones", title: "About page milestones", fields: [["year", "Period"], ["title", "Heading"], ["desc", "Description"]] },
-  { key: "faqs", title: "Contact page FAQs", fields: [["q", "Question"], ["a", "Answer"]] },
-  { key: "pressMentions", title: "Testimonials page recognition", fields: [["publication", "Publication"], ["quote", "Description"]] },
-];
-
-const pageCopySections = [
-  { page: "home", key: "projects", title: "Homepage featured residences", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["copy", "Description", "textarea"], ["buttonLabel", "Button label"], ["buttonUrl", "Button link"]] },
-  { page: "home", key: "testimonials", title: "Homepage testimonials", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["copy", "Description", "textarea"], ["image", "Background image", "image"]] },
-  { page: "home", key: "contact", title: "Homepage contact call-to-action", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["buttonLabel", "Button label"], ["buttonUrl", "Button link"]] },
-  { page: "about", key: "story", title: "About story section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["quote", "Quote", "textarea"], ["image", "Image", "image"], ["imageAlt", "Image description"]] },
-  { page: "about", key: "missionVision", title: "Mission and vision labels", fields: [["missionLabel", "Mission heading"], ["visionLabel", "Vision heading"]] },
-  { page: "about", key: "standards", title: "Construction standards section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["copy", "Description", "textarea"]] },
-  { page: "about", key: "values", title: "Core values section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]] },
-  { page: "about", key: "milestones", title: "Milestones section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["buttonLabel", "Button label"], ["buttonUrl", "Button link"]] },
-  { page: "projects", key: "portfolio", title: "Projects portfolio section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["statusLabel", "Status filter label"], ["typeLabel", "Typology filter label"], ["searchPlaceholder", "Search placeholder"], ["statusAllLabel", "All status label"], ["statusOngoingLabel", "Ongoing status label"], ["statusCompletedLabel", "Completed status label"], ["statusUpcomingLabel", "Upcoming status label"], ["typeAllLabel", "All typologies label"], ["typeResidentialLabel", "Residential type label"], ["typeVillasLabel", "Villas type label"], ["typeMixedUseLabel", "Mixed-use type label"], ["emptyTitle", "Empty results heading"], ["emptyCopy", "Empty results description", "textarea"], ["resetLabel", "Reset button label"]] },
-  { page: "contact", key: "details", title: "Contact details section", fields: [["eyebrow", "Office eyebrow"], ["title", "Office heading"], ["inquiryEyebrow", "Enquiry eyebrow"], ["inquiryTitle", "Enquiry heading"], ["inquiryCopy", "Enquiry description", "textarea"], ["whatsappTitle", "WhatsApp heading"], ["whatsappCopy", "WhatsApp description", "textarea"], ["whatsappButtonLabel", "WhatsApp button"], ["submitLabel", "Enquiry submit button"]] },
-  { page: "contact", key: "faq", title: "Contact FAQ section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]] },
-  { page: "testimonials", key: "recognition", title: "Testimonials recognition section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["bottomCopy", "Description", "textarea"], ["buttonLabel", "Button label"], ["buttonUrl", "Button link"]] },
-  { page: "projectDetails", key: "overview", title: "Residence overview details", fields: [["title", "Heading"], ["priceLabel", "Price label"], ["specsTitle", "Specifications heading"], ["specsCopy", "Specifications description", "textarea"], ["mapLabel", "Location card label"]] },
-  { page: "projectDetails", key: "videos", title: "Residence video section", fields: [["title", "Heading"]] },
-  { page: "projectDetails", key: "amenities", title: "Residence amenities section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["itemLabel", "Amenity label"]] },
-  { page: "projectDetails", key: "location", title: "Residence location section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["callout", "Description", "textarea"]] },
-  { page: "projectDetails", key: "enquiry", title: "Residence enquiry section", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"], ["copy", "Description", "textarea"], ["buttonLabel", "Viewing button"], ["brochureLabel", "Brochure button"], ["brochureRequestLabel", "Brochure request button"], ["brochureReadyLabel", "Brochure ready label"], ["brochureNotice", "Brochure notice", "textarea"], ["backLabel", "Back button"], ["expandLabel", "Gallery expand label"], ["submitLabel", "Enquiry submit button"]] },
-  { page: "privacy", key: "body", title: "Privacy policy paragraphs", fields: [["paragraph1", "Paragraph one", "textarea"], ["paragraph2", "Paragraph two", "textarea"], ["paragraph3", "Paragraph three", "textarea"]] },
-];
+import { pageCopySections, pageCollections as collections } from "../../lib/cmsSectionConfig";
 
 function mergeDefaults(defaults, stored) {
   if (!defaults || typeof defaults !== "object" || Array.isArray(defaults)) return stored ?? defaults;

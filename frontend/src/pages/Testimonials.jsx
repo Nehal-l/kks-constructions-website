@@ -8,11 +8,12 @@ import { useSiteContent } from "../context/ContentContext";
 import { fetchTestimonials } from "../lib/api";
 import PageSections from "../components/PageSections";
 import { getPageCopy, isSectionVisible } from "../lib/content";
+import { pageContentDefaults } from "@data";
 
 export default function Testimonials() {
   const { content } = useSiteContent();
   const company = content?.company || {};
-  const pressMentions = content?.pressMentions || [];
+  const pressMentions = content?.pressMentions?.length ? content.pressMentions : (pageContentDefaults.pressMentions || []);
   const hero = content?.pageHeroes?.testimonials || {
     image: "/images/interior-bedroom.jpg",
     eyebrow: "Testimonials",
