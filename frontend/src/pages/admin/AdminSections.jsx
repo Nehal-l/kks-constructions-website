@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, Eye, EyeOff, ImagePlus, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Eye, EyeOff, ImagePlus, Plus, Save, Trash2, Pencil } from "lucide-react";
 import { getMediaUrl, fetchAdminContent, updateAdminContent, uploadAdminImage } from "../../lib/api";
 import { useSiteContent } from "../../context/ContentContext";
 import { PageSectionPreview } from "../../components/PageSections";
@@ -27,7 +27,7 @@ const blankSection = (page, sortOrder) => ({
   sortOrder,
 });
 
-export default function AdminSections() {
+export default function AdminSections({ onTabChange }) {
   const { refreshContent } = useSiteContent();
   const [content, setContent] = useState(null);
   const [page, setPage] = useState("home");
@@ -222,39 +222,51 @@ export default function AdminSections() {
                     {isEssential ? "Protected — always visible" : isVisible ? "Visible on page" : "Hidden from page"}
                   </p>
                 </div>
-                {isEssential ? (
-                  <span className="shrink-0 border border-sand px-2 py-1 text-[0.6rem] uppercase tracking-wider text-stone">
-                    Required
-                  </span>
-                ) : isVisible ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm(`Hide "${label}" from the public ${page} page? You can restore it at any time.`)) {
+                <div className="flex items-center gap-2 shrink-0">
+                  {onTabChange && (
+                    <button
+                      type="button"
+                      onClick={() => onTabChange("content")}
+                      className="inline-flex items-center gap-1 border border-ink/40 bg-white px-2.5 py-1.5 text-[0.6rem] uppercase tracking-wider text-ink hover:border-gold hover:bg-gold/10 transition"
+                      title="Edit the text, card fields, and copy for this section"
+                    >
+                      <Pencil className="size-3" /> Edit Content
+                    </button>
+                  )}
+                  {isEssential ? (
+                    <span className="shrink-0 border border-sand px-2 py-1 text-[0.6rem] uppercase tracking-wider text-stone">
+                      Required
+                    </span>
+                  ) : isVisible ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm(`Hide "${label}" from the public ${page} page? You can restore it at any time.`)) {
+                          setContent((current) => ({
+                            ...current,
+                            sectionVisibility: { ...(current.sectionVisibility || {}), [id]: false },
+                          }));
+                        }
+                      }}
+                      className="shrink-0 inline-flex items-center gap-1.5 border border-stone/40 px-2.5 py-1.5 text-[0.6rem] uppercase tracking-wider text-stone hover:border-red-300 hover:text-red-700 hover:bg-red-50 transition"
+                    >
+                      <EyeOff className="size-3" /> Hide
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
                         setContent((current) => ({
                           ...current,
-                          sectionVisibility: { ...(current.sectionVisibility || {}), [id]: false },
-                        }));
+                          sectionVisibility: { ...(current.sectionVisibility || {}), [id]: true },
+                        }))
                       }
-                    }}
-                    className="shrink-0 inline-flex items-center gap-1.5 border border-stone/40 px-2.5 py-1.5 text-[0.6rem] uppercase tracking-wider text-stone hover:border-red-300 hover:text-red-700 hover:bg-red-50 transition"
-                  >
-                    <EyeOff className="size-3" /> Hide
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setContent((current) => ({
-                        ...current,
-                        sectionVisibility: { ...(current.sectionVisibility || {}), [id]: true },
-                      }))
-                    }
-                    className="shrink-0 inline-flex items-center gap-1.5 border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-[0.6rem] uppercase tracking-wider text-emerald-800 hover:bg-emerald-100 transition"
-                  >
-                    <Eye className="size-3" /> Restore
-                  </button>
-                )}
+                      className="shrink-0 inline-flex items-center gap-1.5 border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-[0.6rem] uppercase tracking-wider text-emerald-800 hover:bg-emerald-100 transition"
+                    >
+                      <Eye className="size-3" /> Restore
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}

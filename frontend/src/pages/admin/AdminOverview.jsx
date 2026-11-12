@@ -139,10 +139,10 @@ export default function AdminOverview({ onTabChange }) {
       </div>
 
       {/* Quick Action Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <button
           onClick={() => onTabChange("projects")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
         >
           <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Residences</span>
           <h3 className="mt-2 font-display text-xl text-ink">Add or Edit Projects</h3>
@@ -153,23 +153,34 @@ export default function AdminOverview({ onTabChange }) {
 
         <button
           onClick={() => onTabChange("content")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
         >
-          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Text & Media</span>
+          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Text, Cards & Subsections</span>
           <h3 className="mt-2 font-display text-xl text-ink">Edit Website Content</h3>
           <p className="mt-2 text-xs text-stone">
-            Customize company bio, contact telephone, address, key metrics, and page banners.
+            Edit Private Advisory Desk, Services, FAQs, Story, Banners, and all page copy.
           </p>
         </button>
 
         <button
           onClick={() => onTabChange("sections")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
         >
-          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Layout</span>
+          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Layout & Visibility</span>
           <h3 className="mt-2 font-display text-xl text-ink">Manage Page Sections</h3>
           <p className="mt-2 text-xs text-stone">
-            Toggle visibility and reorder modular sections across all pages.
+            Hide, show, or delete any section or subsection across every page.
+          </p>
+        </button>
+
+        <button
+          onClick={() => onTabChange("testimonials")}
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
+        >
+          <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Voices & Praise</span>
+          <h3 className="mt-2 font-display text-xl text-ink">Manage Testimonials</h3>
+          <p className="mt-2 text-xs text-stone">
+            Add or edit resident quotes, architect notes, and publication praise.
           </p>
         </button>
       </div>

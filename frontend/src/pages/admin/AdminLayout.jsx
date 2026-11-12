@@ -184,8 +184,8 @@ export default function AdminLayout() {
         {activeTab === "overview" && <AdminOverview onTabChange={setActiveTab} />}
         {activeTab === "projects" && <AdminProjects />}
         {activeTab === "testimonials" && <AdminTestimonials />}
-        {activeTab === "content" && <AdminContent />}
-        {activeTab === "sections" && <AdminSections />}
+        {activeTab === "content" && <AdminContent onTabChange={setActiveTab} />}
+        {activeTab === "sections" && <AdminSections onTabChange={setActiveTab} />}
         {activeTab === "page-copy" && <AdminPageCopy />}
         {/* Temporarily hidden: {activeTab === "enquiries" && <AdminEnquiries />} */}
         {activeTab === "security" && <AdminSecurity />}
