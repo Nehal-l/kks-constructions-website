@@ -21,7 +21,8 @@ export default function Footer() {
             <img
               src={company.logo || "/images/logo.png"}
               alt={company.name}
-              className="h-12 md:h-14 w-auto object-contain rounded border border-gold/40 shadow-sm transition hover:scale-105"
+              className="h-12 w-auto object-contain rounded border border-gold/40 shadow-sm transition hover:scale-105"
+              style={{ height: "48px", maxHeight: "48px", width: "auto", maxWidth: "180px", objectFit: "contain" }}
             />
           </Link>
           <p className="text-[0.68rem] uppercase tracking-[0.28em] text-gold font-medium">{content.footer?.established || "Est. 2004"}</p>

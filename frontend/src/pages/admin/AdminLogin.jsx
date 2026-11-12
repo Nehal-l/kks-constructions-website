@@ -44,18 +44,19 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-ink text-cream flex flex-col justify-between selection:bg-gold selection:text-ink">
       {/* Top Header */}
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-6 md:px-8">
-        <Link to="/" className="flex items-center gap-3 group">
+      <div className="mx-auto flex w-full max-w-7xl h-16 sm:h-20 items-center justify-between px-5 md:px-8">
+        <Link to="/" className="flex items-center gap-3 group shrink-0">
           <img
             src={company.logo || "/images/logo.png"}
             alt={company.name}
-            className="h-10 w-auto object-contain rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105"
+            className="nav-logo rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105 shrink-0"
+            style={{ height: "36px", maxHeight: "36px", width: "auto", maxWidth: "150px", objectFit: "contain" }}
           />
-          <span className="font-display text-xl tracking-wide text-cream">{company.name}</span>
+          <span className="font-display text-lg sm:text-xl tracking-wide text-cream hidden sm:inline-block">{company.name}</span>
         </Link>
         <Link
           to="/"
-          className="text-xs uppercase tracking-[0.24em] text-sand/70 hover:text-gold transition"
+          className="text-xs uppercase tracking-[0.24em] text-sand/70 hover:text-gold transition shrink-0"
         >
           ← Return to Public Site
         </Link>

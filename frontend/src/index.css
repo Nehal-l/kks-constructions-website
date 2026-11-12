@@ -34,10 +34,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Ensure images, svgs, and videos never overflow their containers */
-img, svg, video, canvas {
-  max-width: 100%;
-  height: auto;
+/* Bulletproof Navbar & Brand Logo Dimensions */
+.nav-logo {
+  height: 38px !important;
+  max-height: 38px !important;
+  width: auto !important;
+  max-width: 160px !important;
+  object-fit: contain !important;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .nav-logo {
+    height: 42px !important;
+    max-height: 42px !important;
+    max-width: 180px !important;
+  }
 }
 
 /* 

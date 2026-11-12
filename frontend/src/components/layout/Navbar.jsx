@@ -58,25 +58,26 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid ? "bg-ink/95 text-cream backdrop-blur-md" : "bg-transparent text-cream"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        solid ? "bg-ink/95 text-cream backdrop-blur-md shadow-sm" : "bg-gradient-to-b from-ink/80 via-ink/40 to-transparent text-cream"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Link to="/" className="flex items-center gap-3.5 group cursor-pointer" aria-label={`${company.name} home`}>
+      <div className="mx-auto flex max-w-7xl h-16 sm:h-20 items-center justify-between px-5 md:px-8">
+        <Link to="/" className="flex items-center gap-3 group cursor-pointer shrink-0" aria-label={`${company.name} home`}>
           <img
             src={company.logo || "/images/logo.png"}
             alt={`${company.name} Logo`}
-            className="h-10 md:h-11 w-auto object-contain rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105"
+            className="nav-logo shrink-0 rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105"
+            style={{ height: "38px", maxHeight: "38px", width: "auto", maxWidth: "160px", objectFit: "contain" }}
           />
-          <span className="font-display text-xl tracking-wide hidden sm:inline-block">{company.name}</span>
+          <span className="font-display text-lg sm:text-xl tracking-wide hidden sm:inline-block text-cream">{company.name}</span>
         </Link>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
           {links.map((link) => <NavigationLink key={`${link.to}-${link.label}`} link={link} />)}
         </nav>
         <Link
           to={content.footer?.enquiryUrl?.startsWith("/") && !content.footer.enquiryUrl.startsWith("//") ? content.footer.enquiryUrl : "/contact"}
-          className="hidden border border-gold/70 px-4 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-gold transition hover:bg-gold hover:text-ink lg:inline-flex cursor-pointer"
+          className="hidden border border-gold/70 px-4 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-gold transition hover:bg-gold hover:text-ink lg:inline-flex cursor-pointer shadow-xs"
         >
           {content.footer?.enquiryLabel && content.footer.enquiryLabel !== "Enquire" ? content.footer.enquiryLabel : "Contact"}
         </Link>
@@ -87,12 +88,12 @@ export default function Navbar() {
           aria-controls="mobile-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? <X aria-hidden /> : <Menu aria-hidden />}
+          {open ? <X className="size-6" aria-hidden /> : <Menu className="size-6" aria-hidden />}
           <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
         </button>
       </div>
       {open ? (
-        <div id="mobile-menu" className="border-t border-white/10 bg-ink/98 backdrop-blur-md px-6 py-8 lg:hidden max-h-[calc(100vh-5rem)] overflow-y-auto shadow-2xl">
+        <div id="mobile-menu" className="border-t border-white/10 bg-ink/98 backdrop-blur-md px-6 py-8 lg:hidden max-h-[calc(100vh-4.5rem)] overflow-y-auto shadow-2xl">
           <nav className="flex flex-col gap-4" aria-label="Mobile" onClick={() => setOpen(false)}>
             {links.map((link) => <NavigationLink key={`${link.to}-${link.label}`} link={link} mobile />)}
             <Link to="/contact" className="mt-4 inline-block text-[0.72rem] uppercase tracking-[0.24em] text-gold border border-gold/40 px-4 py-2 text-center hover:bg-gold hover:text-ink transition cursor-pointer">

@@ -66,19 +66,20 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-cream text-ink flex flex-col selection:bg-gold selection:text-ink">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-ink text-cream border-b border-gold/30">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-3 group">
+        <div className="mx-auto flex max-w-7xl h-16 items-center justify-between px-5 md:px-8">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <Link to="/" className="flex items-center gap-3 group shrink-0">
               <img
                 src={company.logo || "/images/logo.png"}
                 alt={company.name}
-                className="h-9 w-auto object-contain rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105"
+                className="nav-logo rounded border border-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105 shrink-0"
+                style={{ height: "34px", maxHeight: "34px", width: "auto", maxWidth: "140px", objectFit: "contain" }}
               />
-              <span className="font-display text-xl tracking-wide hidden sm:inline-block">
+              <span className="font-display text-lg sm:text-xl tracking-wide hidden sm:inline-block text-cream">
                 {company.name}
               </span>
             </Link>
-            <span className="border-l border-gold/40 pl-3 text-[0.62rem] uppercase tracking-[0.24em] text-gold font-medium">
+            <span className="border-l border-gold/40 pl-3 text-[0.62rem] uppercase tracking-[0.24em] text-gold font-medium shrink-0">
               Admin CMS
             </span>
           </div>
