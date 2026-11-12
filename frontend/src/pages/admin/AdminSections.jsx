@@ -148,10 +148,10 @@ export default function AdminSections({ onTabChange }) {
           <p className="mt-1 text-xs text-stone">Create reusable content sections, choose a page, preview, reorder, and publish without changing code.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => save(false)} disabled={saving} className="inline-flex items-center gap-2 border border-ink px-4 py-2.5 text-xs uppercase tracking-wider disabled:opacity-50">
+          <button onClick={() => save(false)} disabled={saving} className="inline-flex items-center gap-2 border border-ink px-4 py-2.5 text-xs uppercase tracking-wider hover:bg-white transition cursor-pointer disabled:opacity-50">
             <Save className="size-4" /> Save drafts
           </button>
-          <button onClick={() => save(true)} disabled={saving} className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-xs uppercase tracking-wider text-cream disabled:opacity-50">
+          <button onClick={() => save(true)} disabled={saving} className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-xs uppercase tracking-wider text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm disabled:opacity-50">
             <Eye className="size-4" /> {saving ? "Saving…" : "Save & publish"}
           </button>
         </div>
@@ -163,12 +163,12 @@ export default function AdminSections({ onTabChange }) {
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Page sections">
           {pages.map((item) => (
             <button key={item} type="button" onClick={() => setPage(item)} aria-pressed={page === item}
-              className={`border px-4 py-2 text-xs uppercase tracking-wider ${page === item ? "border-gold bg-gold text-ink" : "border-sand bg-white text-stone"}`}>
+              className={`border px-4 py-2 text-xs uppercase tracking-wider transition cursor-pointer ${page === item ? "border-gold bg-gold text-ink font-medium" : "border-sand bg-white text-stone hover:border-gold hover:text-ink"}`}>
               {item}
             </button>
           ))}
         </div>
-        <button onClick={addSection} className="inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs uppercase tracking-wider text-ink">
+        <button onClick={addSection} className="inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs uppercase tracking-wider text-ink hover:bg-gold-deep hover:text-cream transition cursor-pointer shadow-sm">
           <Plus className="size-4" /> Add section
         </button>
       </div>

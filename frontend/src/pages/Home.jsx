@@ -87,43 +87,43 @@ export default function Home() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/45 to-ink/20" />
-        <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-5 pb-20 pt-32 md:px-8">
-          <p className="text-[0.72rem] uppercase tracking-[0.38em] text-gold">
+        <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-5 pb-16 sm:pb-20 pt-28 sm:pt-32 md:px-8">
+          <p className="text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.32em] sm:tracking-[0.38em] text-gold font-medium">
             {hero.eyebrow || company.name}
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.95] md:text-7xl lg:text-8xl">
+          <h1 className="mt-4 sm:mt-6 max-w-3xl font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] sm:leading-[0.95]">
             {hero.title || "Architecture that holds the light."}
           </h1>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-sand/85">
+          <p className="mt-4 sm:mt-6 max-w-lg text-sm sm:text-base leading-relaxed text-sand/85 font-light">
             {hero.copy || `${company.tagline}. Residences, gardens, and quiet interiors imagined for a slower kind of city living.`}
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-8 sm:mt-10 flex flex-wrap gap-3.5 sm:gap-4">
             <Link
               to={heroLink(hero.primaryButtonUrl, "/projects")}
-              className="inline-flex items-center gap-2 bg-gold px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink"
+              className="inline-flex items-center gap-2 bg-gold px-6 sm:px-7 py-3 text-[0.65rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-ink hover:bg-gold-deep hover:text-cream transition cursor-pointer shadow-sm"
             >
               {hero.primaryButtonLabel || "View projects"} <ArrowRight className="size-4" aria-hidden />
             </Link>
             <Link
               to={heroLink(hero.secondaryButtonUrl, "/about")}
-              className="inline-flex items-center border border-cream/40 px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold"
+              className="inline-flex items-center border border-cream/40 px-6 sm:px-7 py-3 text-[0.65rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition cursor-pointer"
             >
               {hero.secondaryButtonLabel || "Our story"}
             </Link>
           </div>
-          <p className="mt-8 max-w-xl text-[0.7rem] leading-relaxed text-sand/55">
+          <p className="mt-8 max-w-xl text-[0.68rem] sm:text-[0.7rem] leading-relaxed text-sand/55">
             {company.disclaimers?.visuals}
           </p>
         </div>
       </section>}
       {dataError && <p role="status" className="bg-sand/30 px-5 py-3 text-center text-xs text-stone">{dataError}</p>}
 
-      {isSectionVisible(content, "home-intro") && <section className="mx-auto grid max-w-7xl gap-12 px-5 py-24 md:grid-cols-2 md:px-8">
+      {isSectionVisible(content, "home-intro") && <section className="mx-auto grid max-w-7xl gap-8 lg:gap-12 px-5 py-16 sm:py-20 md:py-24 md:grid-cols-2 md:px-8">
         <Reveal>
           <img
             src={getMediaUrl(intro.image || "/images/lobby-interior.jpg")}
             alt={intro.imageAlt || ""}
-            className="h-full min-h-[420px] w-full object-cover"
+            className="h-full min-h-[300px] sm:min-h-[420px] w-full object-cover shadow-sm"
           />
         </Reveal>
         <Reveal delay={0.1} className="flex flex-col justify-center">
@@ -134,7 +134,7 @@ export default function Home() {
           />
           <Link
             to={introLink}
-            className="mt-8 inline-flex w-fit items-center gap-2 text-[0.7rem] uppercase tracking-[0.24em] text-gold-deep"
+            className="mt-6 sm:mt-8 inline-flex w-fit items-center gap-2 text-[0.68rem] sm:text-[0.7rem] uppercase tracking-[0.24em] text-gold-deep hover:text-ink transition cursor-pointer"
           >
             {intro.buttonLabel || `About ${company.name}`} <ArrowRight className="size-4" />
           </Link>
@@ -143,11 +143,11 @@ export default function Home() {
 
       {isSectionVisible(content, "home-highlights") && highlights.length > 0 && (
         <section className="bg-ink text-cream">
-          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-20 md:grid-cols-4 md:px-8">
+          <div className="mx-auto grid max-w-7xl gap-6 sm:gap-8 px-5 py-14 sm:py-20 grid-cols-2 lg:grid-cols-4 md:px-8">
             {highlights.map((item) => (
-              <Reveal key={item.label}>
-                <p className="font-display text-5xl text-gold">{item.value}</p>
-                <p className="mt-3 text-[0.72rem] uppercase tracking-[0.22em] text-sand/70">
+              <Reveal key={item.label} className="border-l border-gold/30 pl-4 sm:pl-6">
+                <p className="font-display text-4xl sm:text-5xl text-gold">{item.value}</p>
+                <p className="mt-2 sm:mt-3 text-[0.65rem] sm:text-[0.72rem] uppercase tracking-[0.2em] sm:tracking-[0.22em] text-sand/70">
                   {item.label}
                 </p>
               </Reveal>
@@ -156,8 +156,8 @@ export default function Home() {
         </section>
       )}
 
-      {isSectionVisible(content, "home-projects") && <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      {isSectionVisible(content, "home-projects") && <section className="mx-auto max-w-7xl px-5 py-16 sm:py-20 md:py-24 md:px-8">
+        <div className="mb-8 sm:mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             eyebrow={projectsCopy.eyebrow}
             title={projectsCopy.title}
@@ -165,7 +165,7 @@ export default function Home() {
           />
           <Link
             to={heroLink(projectsCopy.buttonUrl, "/projects")}
-            className="text-[0.7rem] uppercase tracking-[0.24em] text-gold-deep"
+            className="text-[0.68rem] sm:text-[0.7rem] uppercase tracking-[0.24em] text-gold-deep hover:text-ink transition cursor-pointer"
           >
             {projectsCopy.buttonLabel}
           </Link>
@@ -180,7 +180,7 @@ export default function Home() {
       </section>}
 
       {isSectionVisible(content, "home-testimonials") && content?.pageVisibility?.testimonials !== false && testimonialsList.length > 0 && (
-        <section className="relative overflow-hidden bg-ink py-24 text-cream">
+        <section className="relative overflow-hidden bg-ink py-16 sm:py-20 md:py-24 text-cream">
           <img
             src={getMediaUrl(testimonialsCopy.image)}
             alt=""
@@ -193,13 +193,13 @@ export default function Home() {
               copy={testimonialsCopy.copy}
               light
             />
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <div className="mt-10 sm:mt-12 grid gap-6 sm:gap-8 md:grid-cols-3">
               {testimonialsList.slice(0, 3).map((item) => (
                 <blockquote
                   key={item._id || item.id}
-                  className="border border-gold/25 bg-ink/60 p-8 backdrop-blur-sm"
+                  className="border border-gold/25 bg-ink/60 p-6 sm:p-8 backdrop-blur-sm shadow-sm"
                 >
-                  <p className="font-display text-2xl leading-snug text-cream">"{item.quote}"</p>
+                  <p className="font-display text-xl sm:text-2xl leading-snug text-cream">"{item.quote}"</p>
                   <footer className="mt-6 text-sm text-gold">
                     {item.name}
                     <span className="mt-1 block text-sand/60">{item.role}</span>
@@ -211,14 +211,14 @@ export default function Home() {
         </section>
       )}
 
-      {isSectionVisible(content, "home-contact") && <section className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 py-24 md:flex-row md:items-center md:px-8">
+      {isSectionVisible(content, "home-contact") && <section className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 py-16 sm:py-20 md:py-24 md:flex-row md:items-center md:px-8">
         <div>
-          <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep">{contactCopy.eyebrow}</p>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl">{contactCopy.title}</h2>
+          <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep font-medium">{contactCopy.eyebrow}</p>
+          <h2 className="mt-3 sm:mt-4 font-display text-3xl sm:text-4xl md:text-6xl text-ink leading-tight">{contactCopy.title}</h2>
         </div>
         <Link
           to={heroLink(contactCopy.buttonUrl, "/contact")}
-          className="inline-flex bg-ink px-8 py-4 text-[0.7rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink"
+          className="inline-flex bg-ink px-7 sm:px-8 py-3.5 sm:py-4 text-[0.68rem] sm:text-[0.7rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm shrink-0"
         >
           {contactCopy.buttonLabel.replace("KKS Constructions", company.name)}
         </Link>

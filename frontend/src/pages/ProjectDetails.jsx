@@ -166,18 +166,18 @@ export default function ProjectDetails() {
                 {project.type} — {project.location}
               </span>
             </div>
-            <h1 className="mt-4 font-display text-5xl md:text-7xl lg:text-8xl leading-none">
+            <h1 className="mt-4 font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-tight sm:leading-none">
               {project.name}
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-sand/85 leading-relaxed font-light">
+            <p className="mt-4 sm:mt-5 max-w-2xl text-base sm:text-lg text-sand/85 leading-relaxed font-light">
               {project.headline}
             </p>
 
             {/* Quick Actions */}
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-6 sm:mt-8 flex flex-wrap gap-3.5 sm:gap-4">
               <a
                 href="#contact-section"
-                className="inline-flex items-center gap-2 bg-gold px-7 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:bg-gold-deep hover:text-cream"
+                className="inline-flex items-center gap-2 bg-gold px-6 sm:px-7 py-3 text-[0.65rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-ink transition hover:bg-gold-deep hover:text-cream cursor-pointer shadow-sm"
               >
                 {enquiryCopy.contactButtonLabel || "Contact Us"}
               </a>
@@ -187,7 +187,7 @@ export default function ProjectDetails() {
                   target="_blank"
                   rel="noreferrer"
                   download
-                  className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition"
+                  className="inline-flex items-center gap-2 border border-cream/40 px-5 sm:px-6 py-3 text-[0.65rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition cursor-pointer"
                 >
                   <Download className="size-3.5" /> {enquiryCopy.brochureLabel}
                 </a>
@@ -195,7 +195,7 @@ export default function ProjectDetails() {
                 <button
                   type="button"
                   onClick={() => setBrochureRequested(true)}
-                  className="inline-flex items-center gap-2 border border-cream/40 px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition"
+                  className="inline-flex items-center gap-2 border border-cream/40 px-5 sm:px-6 py-3 text-[0.65rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:border-gold hover:text-gold transition cursor-pointer"
                 >
                   <Download className="size-3.5" />
                   {brochureRequested ? enquiryCopy.brochureReadyLabel : enquiryCopy.brochureRequestLabel}
@@ -283,9 +283,9 @@ export default function ProjectDetails() {
                 {project.specs?.length > 0 && (
                   <dl className="mt-8 divide-y divide-sand/70 border-t border-b border-sand/70">
                     {project.specs.map((spec) => (
-                      <div key={spec.label} className="flex justify-between py-3.5 text-sm">
+                      <div key={spec.label} className="flex flex-wrap items-center justify-between gap-2 py-3.5 text-sm">
                         <dt className="text-stone">{spec.label}</dt>
-                        <dd className="font-medium text-ink">{spec.value}</dd>
+                        <dd className="font-medium text-ink text-right">{spec.value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -413,7 +413,7 @@ export default function ProjectDetails() {
           <button
             type="button"
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-6 right-6 text-cream/80 hover:text-gold p-2 transition"
+            className="absolute top-4 sm:top-6 right-4 sm:right-6 text-cream/80 hover:text-gold p-2 transition cursor-pointer z-10"
             aria-label="Close fullscreen gallery"
           >
             <X className="size-7" />
@@ -422,7 +422,7 @@ export default function ProjectDetails() {
           <button
             type="button"
             onClick={prevImage}
-            className="absolute left-6 text-cream/80 hover:text-gold p-3 transition"
+            className="absolute left-2 sm:left-6 text-cream/80 hover:text-gold p-2 sm:p-3 transition cursor-pointer z-10"
             aria-label="Previous photograph"
           >
             <ChevronLeft className="size-8" />
@@ -431,7 +431,7 @@ export default function ProjectDetails() {
           <button
             type="button"
             onClick={nextImage}
-            className="absolute right-6 text-cream/80 hover:text-gold p-3 transition"
+            className="absolute right-2 sm:right-6 text-cream/80 hover:text-gold p-2 sm:p-3 transition cursor-pointer z-10"
             aria-label="Next photograph"
           >
             <ChevronRight className="size-8" />

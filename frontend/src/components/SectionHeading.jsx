@@ -11,14 +11,14 @@ export default function SectionHeading({ eyebrow, title, copy, light = false }) 
         </p>
       ) : null}
       <h2
-        className={`font-display text-4xl md:text-5xl font-medium leading-tight ${
+        className={`font-display text-3xl sm:text-4xl md:text-5xl font-medium leading-tight ${
           light ? "text-cream" : "text-ink"
         }`}
       >
         {title}
       </h2>
       {copy ? (
-        <p className={`mt-5 text-base leading-relaxed ${light ? "text-sand/80" : "text-stone"}`}>
+        <p className={`mt-3 sm:mt-5 text-sm sm:text-base leading-relaxed font-light ${light ? "text-sand/80" : "text-stone"}`}>
           {copy}
         </p>
       ) : null}

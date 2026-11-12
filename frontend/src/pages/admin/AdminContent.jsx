@@ -238,7 +238,7 @@ export default function AdminContent({ onTabChange }) {
             type="button"
             onClick={(e) => handleSave(e, false)}
             disabled={saving}
-            className="flex items-center gap-2 border border-ink px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.2em] text-ink hover:bg-white transition disabled:opacity-50"
+            className="flex items-center gap-2 border border-ink px-5 py-2.5 text-[0.68rem] uppercase tracking-[0.2em] text-ink hover:bg-white transition cursor-pointer disabled:opacity-50"
           >
             <Save className="size-4" /> Save Draft
           </button>
@@ -246,7 +246,7 @@ export default function AdminContent({ onTabChange }) {
             type="button"
             onClick={(e) => handleSave(e, true)}
             disabled={saving}
-            className="flex items-center gap-2 bg-ink px-6 py-2.5 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition disabled:opacity-50"
+            className="flex items-center gap-2 bg-ink px-6 py-2.5 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm disabled:opacity-50"
           >
             <Save className="size-4" /> {saving ? "Publishing…" : "Save & Publish"}
           </button>
@@ -263,10 +263,10 @@ export default function AdminContent({ onTabChange }) {
               key={tab.key}
               type="button"
               onClick={() => setActiveSection(tab.key)}
-              className={`flex items-center gap-2 px-3.5 py-2 text-xs uppercase tracking-wider transition border ${
+              className={`flex items-center gap-2 px-3.5 py-2 text-xs uppercase tracking-wider transition border cursor-pointer ${
                 active
                   ? "border-gold bg-gold text-ink font-semibold shadow-xs"
-                  : "border-sand/60 bg-white/70 text-stone hover:border-gold hover:text-ink"
+                  : "border-sand/60 bg-white/70 text-stone hover:border-gold hover:text-ink hover:bg-white"
               }`}
             >
               <Icon className="size-3.5" /> {tab.label}

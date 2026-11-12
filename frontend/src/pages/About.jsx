@@ -42,14 +42,14 @@ export default function About() {
       />}
 
       {/* Story & Philosophy */}
-      {isSectionVisible(content, "about-story") && <section className="mx-auto grid max-w-7xl gap-16 px-5 py-24 md:grid-cols-2 md:px-8">
+      {isSectionVisible(content, "about-story") && <section className="mx-auto grid max-w-7xl gap-10 lg:gap-16 px-5 py-16 sm:py-20 md:py-24 md:grid-cols-2 md:px-8">
         <Reveal>
           <SectionHeading
             eyebrow={storyCopy.eyebrow}
             title={storyCopy.title.replace("KKS", company.shortName || "KKS")}
             copy={storyCopy.copy || company.overview}
           />
-          <div className="mt-8 border-l border-gold pl-6 text-sm text-stone italic">
+          <div className="mt-6 sm:mt-8 border-l border-gold pl-5 sm:pl-6 text-sm text-stone italic">
             {storyCopy.quote}
           </div>
         </Reveal>
@@ -57,42 +57,42 @@ export default function About() {
           <img
             src={getMediaUrl(storyCopy.image)}
             alt={storyCopy.imageAlt}
-            className="h-full min-h-[380px] w-full object-cover shadow-lg"
+            className="h-full min-h-[300px] sm:min-h-[380px] w-full object-cover shadow-sm"
           />
         </Reveal>
       </section>}
 
       {/* Mission & Vision */}
-      {isSectionVisible(content, "about-mission-vision") && <section className="bg-ink py-24 text-cream">
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 md:grid-cols-2 md:px-8">
-          <div className="border border-gold/20 bg-ink/50 p-8 backdrop-blur-sm">
-            <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold">{missionVisionCopy.missionLabel}</p>
-            <p className="mt-4 font-display text-3xl leading-snug">{company.mission}</p>
+      {isSectionVisible(content, "about-mission-vision") && <section className="bg-ink py-16 sm:py-24 text-cream">
+        <div className="mx-auto grid max-w-7xl gap-6 sm:gap-12 px-5 md:grid-cols-2 md:px-8">
+          <div className="border border-gold/20 bg-ink/50 p-6 sm:p-8 backdrop-blur-sm shadow-sm">
+            <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold font-medium">{missionVisionCopy.missionLabel}</p>
+            <p className="mt-4 font-display text-2xl sm:text-3xl leading-snug">{company.mission}</p>
           </div>
-          <div className="border border-gold/20 bg-ink/50 p-8 backdrop-blur-sm">
-            <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold">{missionVisionCopy.visionLabel}</p>
-            <p className="mt-4 font-display text-3xl leading-snug">{company.vision}</p>
+          <div className="border border-gold/20 bg-ink/50 p-6 sm:p-8 backdrop-blur-sm shadow-sm">
+            <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold font-medium">{missionVisionCopy.visionLabel}</p>
+            <p className="mt-4 font-display text-2xl sm:text-3xl leading-snug">{company.vision}</p>
           </div>
         </div>
       </section>}
 
       {/* Construction & Design Pillars */}
-      {isSectionVisible(content, "about-standards") && <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
+      {isSectionVisible(content, "about-standards") && <section className="mx-auto max-w-7xl px-5 py-16 sm:py-24 md:px-8">
         <SectionHeading
           eyebrow={standardsCopy.eyebrow}
           title={standardsCopy.title}
           copy={standardsCopy.copy}
         />
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className="mt-10 sm:mt-12 grid gap-6 sm:gap-8 md:grid-cols-3">
           {standards.map((item, index) => {
             const Icon = icons[item.icon] || Award;
             return (
-              <Reveal key={`${item.title}-${index}`} delay={index * 0.08} className="border border-sand bg-cream p-8">
+              <Reveal key={`${item.title}-${index}`} delay={index * 0.08} className="border border-sand bg-cream p-6 sm:p-8 transition hover:border-gold hover:shadow-sm">
                 <div className="flex size-12 items-center justify-center border border-gold/50 text-gold-deep mb-6">
                   <Icon className="size-6" />
                 </div>
                 <h3 className="font-display text-2xl text-ink">{item.title}</h3>
-                <p className="mt-3 text-xs leading-relaxed text-stone">{item.text}</p>
+                <p className="mt-3 text-xs sm:text-sm leading-relaxed text-stone font-light">{item.text}</p>
               </Reveal>
             );
           })}
@@ -101,14 +101,14 @@ export default function About() {
 
       {/* Values */}
       {isSectionVisible(content, "about-values") && values.length > 0 && (
-        <section className="border-t border-sand bg-sand/30 py-24">
+        <section className="border-t border-sand bg-sand/30 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-5 md:px-8">
             <SectionHeading eyebrow={valuesCopy.eyebrow} title={valuesCopy.title} />
-            <div className="mt-12 grid gap-8 md:grid-cols-2">
+            <div className="mt-10 sm:mt-12 grid gap-6 sm:gap-8 md:grid-cols-2">
               {values.map((value, index) => (
                 <Reveal key={`${value.title}-${index}`} delay={index * 0.05} className="border-t border-sand pt-6">
-                  <h3 className="font-display text-3xl">{value.title}</h3>
-                  <p className="mt-3 text-stone leading-relaxed">{value.text}</p>
+                  <h3 className="font-display text-2xl sm:text-3xl">{value.title}</h3>
+                  <p className="mt-3 text-sm sm:text-base text-stone leading-relaxed font-light">{value.text}</p>
                 </Reveal>
               ))}
             </div>
@@ -117,22 +117,22 @@ export default function About() {
       )}
 
       {/* Development Milestones */}
-      {isSectionVisible(content, "about-milestones") && <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
+      {isSectionVisible(content, "about-milestones") && <section className="mx-auto max-w-7xl px-5 py-16 sm:py-24 md:px-8">
         <SectionHeading eyebrow={milestonesCopy.eyebrow} title={milestonesCopy.title} />
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className="mt-10 sm:mt-12 grid gap-6 sm:gap-8 sm:grid-cols-2 md:grid-cols-3">
           {milestones.map((m, index) => (
-            <div key={`${m.year}-${index}`} className="relative border-l border-gold pl-6 py-2">
+            <div key={`${m.year}-${index}`} className="relative border-l border-gold pl-5 sm:pl-6 py-2">
               <span className="font-display text-2xl text-gold-deep">{m.year}</span>
               <h4 className="mt-2 text-base font-medium text-ink">{m.title}</h4>
-              <p className="mt-2 text-xs leading-relaxed text-stone">{m.desc}</p>
+              <p className="mt-2 text-xs sm:text-sm leading-relaxed text-stone font-light">{m.desc}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-16 flex justify-center">
+        <div className="mt-12 sm:mt-16 flex justify-center">
           <Link
             to={milestonesCopy.buttonUrl?.startsWith("/") && !milestonesCopy.buttonUrl.startsWith("//") ? milestonesCopy.buttonUrl : "/projects"}
-            className="inline-flex items-center gap-2 bg-ink px-8 py-3.5 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition"
+            className="inline-flex items-center gap-2 bg-ink px-8 py-3.5 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm"
           >
             {milestonesCopy.buttonLabel} <ArrowRight className="size-4" />
           </Link>

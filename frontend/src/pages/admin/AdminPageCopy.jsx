@@ -131,8 +131,8 @@ export default function AdminPageCopy() {
           <p className="mt-1 text-xs text-stone">Edit homepage introduction, FAQs, milestones, standards, and press mentions.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => save(false)} disabled={saving} className="inline-flex items-center gap-2 border border-ink px-4 py-2.5 text-xs uppercase tracking-wider disabled:opacity-50"><Save className="size-4" /> Save drafts</button>
-          <button onClick={() => save(true)} disabled={saving} className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-xs uppercase tracking-wider text-cream disabled:opacity-50"><Save className="size-4" /> {saving ? "Saving…" : "Publish changes"}</button>
+          <button onClick={() => save(false)} disabled={saving} className="inline-flex items-center gap-2 border border-ink px-4 py-2.5 text-xs uppercase tracking-wider hover:bg-white transition cursor-pointer disabled:opacity-50"><Save className="size-4" /> Save drafts</button>
+          <button onClick={() => save(true)} disabled={saving} className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-xs uppercase tracking-wider text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm disabled:opacity-50"><Save className="size-4" /> {saving ? "Saving…" : "Publish changes"}</button>
         </div>
       </div>
       {notice && <p role="status" className="border border-sand bg-white px-4 py-3 text-sm text-stone">{notice}</p>}

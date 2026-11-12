@@ -121,11 +121,11 @@ export default function Projects() {
           <h2 className="mt-2 font-display text-3xl text-ink">{portfolioCopy.title}</h2>
         </div>
         {/* Controls: Filters + Search */}
-        <div className="flex flex-col gap-6 border-b border-sand pb-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap items-center gap-6">
+        <div className="flex flex-col gap-6 border-b border-sand pb-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-6">
             {/* Status tabs */}
             <div>
-              <p className="mb-2 text-[0.62rem] uppercase tracking-[0.26em] text-stone">{portfolioCopy.statusLabel}</p>
+              <p className="mb-2 text-[0.62rem] uppercase tracking-[0.26em] text-stone font-medium">{portfolioCopy.statusLabel}</p>
               <div className="flex flex-wrap gap-2" role="tablist" aria-label="Project status">
                 {statusFilters.map((item) => (
                   <button
@@ -133,10 +133,10 @@ export default function Projects() {
                     type="button"
                     onClick={() => setStatus(item)}
                     aria-pressed={status === item}
-                    className={`border px-4 py-2 text-[0.65rem] uppercase tracking-[0.22em] transition ${
+                    className={`border px-3.5 sm:px-4 py-1.5 sm:py-2 text-[0.62rem] sm:text-[0.65rem] uppercase tracking-[0.22em] transition cursor-pointer ${
                       status === item
-                        ? "border-ink bg-ink text-cream"
-                        : "border-sand text-stone hover:border-gold hover:text-ink"
+                        ? "border-ink bg-ink text-cream shadow-xs"
+                        : "border-sand bg-cream/50 text-stone hover:border-gold hover:text-ink hover:bg-white"
                     }`}
                   >
                     {statusNames[item]}
@@ -147,7 +147,7 @@ export default function Projects() {
 
             {/* Typology tabs */}
             <div>
-              <p className="mb-2 text-[0.62rem] uppercase tracking-[0.26em] text-stone">{portfolioCopy.typeLabel}</p>
+              <p className="mb-2 text-[0.62rem] uppercase tracking-[0.26em] text-stone font-medium">{portfolioCopy.typeLabel}</p>
               <div className="flex flex-wrap gap-2" role="tablist" aria-label="Project typology">
                 {typologyFilters.map((item) => (
                   <button
@@ -155,10 +155,10 @@ export default function Projects() {
                     type="button"
                     onClick={() => setType(item)}
                     aria-pressed={type === item}
-                    className={`border px-3.5 py-1.5 text-[0.62rem] uppercase tracking-[0.2em] transition ${
+                    className={`border px-3 sm:px-3.5 py-1.5 text-[0.62rem] uppercase tracking-[0.2em] transition cursor-pointer ${
                       type === item
-                        ? "border-gold bg-gold text-ink font-medium"
-                        : "border-sand/70 text-stone hover:border-gold hover:text-ink"
+                        ? "border-gold bg-gold text-ink font-semibold shadow-xs"
+                        : "border-sand/70 bg-cream/50 text-stone hover:border-gold hover:text-ink hover:bg-white"
                     }`}
                   >
                     {typeNames[item]}
@@ -169,20 +169,20 @@ export default function Projects() {
           </div>
 
           {/* Search bar */}
-          <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-stone" aria-hidden />
+          <div className="relative w-full lg:max-w-xs">
+            <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-stone" aria-hidden />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={portfolioCopy.searchPlaceholder}
-              className="w-full border border-sand bg-white/70 py-2.5 pl-9 pr-9 text-xs tracking-wider text-ink placeholder:text-stone/60 focus:border-gold focus:bg-white focus:outline-none"
+              className="w-full border border-sand bg-white/70 py-2.5 pl-10 pr-9 text-xs tracking-wider text-ink placeholder:text-stone/60 focus:border-gold focus:bg-white focus:outline-none transition"
             />
             {search ? (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone hover:text-ink"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone hover:text-ink p-1 cursor-pointer"
                 aria-label="Clear search"
               >
                 <X className="size-3.5" />

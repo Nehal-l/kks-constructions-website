@@ -99,7 +99,7 @@ export default function AdminLayout() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 border border-red-500/50 bg-red-950/30 px-3 py-1.5 text-[0.65rem] uppercase tracking-wider text-red-200 hover:bg-red-900/60 transition"
+              className="flex items-center gap-1.5 border border-red-500/50 bg-red-950/30 px-3 py-1.5 text-[0.65rem] uppercase tracking-wider text-red-200 hover:bg-red-900/60 transition cursor-pointer"
             >
               <LogOut className="size-3.5" /> Logout
             </button>
@@ -108,7 +108,8 @@ export default function AdminLayout() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-cream p-1"
+            className="lg:hidden text-cream p-1 cursor-pointer hover:text-gold transition"
+            aria-label="Toggle admin navigation"
           >
             {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
           </button>
@@ -116,7 +117,7 @@ export default function AdminLayout() {
 
         {/* Desktop Tab Navigation Bar */}
         <div className="hidden lg:block border-t border-white/10 bg-black/30">
-          <div className="mx-auto flex max-w-7xl items-center gap-1 px-5 md:px-8">
+          <div className="mx-auto flex max-w-7xl items-center gap-1 px-5 md:px-8 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.key;
@@ -124,7 +125,7 @@ export default function AdminLayout() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 px-5 py-3 text-xs uppercase tracking-widest transition border-b-2 ${
+                  className={`flex items-center gap-2 px-5 py-3 text-xs uppercase tracking-widest transition border-b-2 cursor-pointer shrink-0 ${
                     active
                       ? "border-gold text-gold font-medium bg-white/5"
                       : "border-transparent text-sand/70 hover:text-cream hover:bg-white/5"
@@ -139,7 +140,7 @@ export default function AdminLayout() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-white/10 bg-ink px-5 py-6 space-y-4">
+          <div className="lg:hidden border-t border-white/10 bg-ink px-5 py-6 space-y-4 shadow-xl">
             <div className="flex flex-col gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -151,7 +152,7 @@ export default function AdminLayout() {
                       setActiveTab(tab.key);
                       setMobileMenuOpen(false);
                     }}
-                    className={`flex items-center gap-3 p-3 text-sm uppercase tracking-wider transition ${
+                    className={`flex items-center gap-3 p-3 text-sm uppercase tracking-wider transition cursor-pointer ${
                       active ? "bg-gold text-ink font-semibold" : "text-cream hover:bg-white/10"
                     }`}
                   >
@@ -164,13 +165,13 @@ export default function AdminLayout() {
               <Link
                 to="/"
                 target="_blank"
-                className="text-xs uppercase tracking-wider text-gold flex items-center gap-1"
+                className="text-xs uppercase tracking-wider text-gold flex items-center gap-1 cursor-pointer hover:underline"
               >
                 Public Site <ExternalLink className="size-3" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-xs uppercase tracking-wider text-red-400 flex items-center gap-1"
+                className="text-xs uppercase tracking-wider text-red-400 flex items-center gap-1 cursor-pointer hover:text-red-300 transition"
               >
                 <LogOut className="size-3" /> Logout
               </button>

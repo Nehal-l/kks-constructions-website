@@ -63,7 +63,7 @@ export default function AdminOverview({ onTabChange }) {
           </div>
           <button
             onClick={load}
-            className="self-start md:self-auto inline-flex items-center gap-2 border border-gold/50 px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-ink transition"
+            className="self-start md:self-auto inline-flex items-center gap-2 border border-gold/50 px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-ink transition cursor-pointer"
           >
             <RefreshCw className="size-3.5" /> Refresh Metrics
           </button>
@@ -75,7 +75,7 @@ export default function AdminOverview({ onTabChange }) {
         {/* Projects Card */}
         <div
           onClick={() => onTabChange("projects")}
-          className="cursor-pointer border border-sand/40 bg-white p-6 shadow-sm hover:border-gold transition group"
+          className="cursor-pointer border border-sand/40 bg-white p-6 shadow-sm hover:border-gold hover:shadow-md transition group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[0.68rem] uppercase tracking-[0.24em] text-stone">Residences</span>
@@ -97,7 +97,7 @@ export default function AdminOverview({ onTabChange }) {
         {/* Testimonials Card */}
         <div
           onClick={() => onTabChange("testimonials")}
-          className="cursor-pointer border border-sand/40 bg-white p-6 shadow-sm hover:border-gold transition group"
+          className="cursor-pointer border border-sand/40 bg-white p-6 shadow-sm hover:border-gold hover:shadow-md transition group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[0.68rem] uppercase tracking-[0.24em] text-stone">Testimonials</span>
@@ -111,7 +111,7 @@ export default function AdminOverview({ onTabChange }) {
           </div>
         </div>
 
-                {/* Inquiries card temporarily hidden */}
+        {/* Inquiries card temporarily hidden */}
 
         {/* Storage Health */}
         <div className="border border-sand/40 bg-white p-6 shadow-sm">
@@ -142,7 +142,7 @@ export default function AdminOverview({ onTabChange }) {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <button
           onClick={() => onTabChange("projects")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white hover:shadow-md transition text-left shadow-xs cursor-pointer"
         >
           <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Residences</span>
           <h3 className="mt-2 font-display text-xl text-ink">Add or Edit Projects</h3>
@@ -153,7 +153,7 @@ export default function AdminOverview({ onTabChange }) {
 
         <button
           onClick={() => onTabChange("content")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white hover:shadow-md transition text-left shadow-xs cursor-pointer"
         >
           <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Text, Cards & Subsections</span>
           <h3 className="mt-2 font-display text-xl text-ink">Edit Website Content</h3>
@@ -164,7 +164,7 @@ export default function AdminOverview({ onTabChange }) {
 
         <button
           onClick={() => onTabChange("sections")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white hover:shadow-md transition text-left shadow-xs cursor-pointer"
         >
           <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Layout & Visibility</span>
           <h3 className="mt-2 font-display text-xl text-ink">Manage Page Sections</h3>
@@ -175,7 +175,7 @@ export default function AdminOverview({ onTabChange }) {
 
         <button
           onClick={() => onTabChange("testimonials")}
-          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white transition text-left shadow-xs"
+          className="flex flex-col items-start p-6 border border-sand bg-cream hover:border-gold hover:bg-white hover:shadow-md transition text-left shadow-xs cursor-pointer"
         >
           <span className="text-[0.62rem] uppercase tracking-widest text-gold-deep font-medium">Voices & Praise</span>
           <h3 className="mt-2 font-display text-xl text-ink">Manage Testimonials</h3>

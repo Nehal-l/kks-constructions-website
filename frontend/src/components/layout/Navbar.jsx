@@ -46,12 +46,12 @@ export default function Navbar() {
 
   function NavigationLink({ link, mobile = false }) {
     const className = mobile
-      ? ({ isActive }) => `font-display text-3xl ${isActive ? "text-gold" : "text-cream"}`
-      : ({ isActive }) => `text-[0.68rem] uppercase tracking-[0.24em] transition hover:text-gold ${
+      ? ({ isActive }) => `font-display text-2xl sm:text-3xl py-1.5 block transition cursor-pointer ${isActive ? "text-gold" : "text-cream hover:text-gold"}`
+      : ({ isActive }) => `text-[0.68rem] uppercase tracking-[0.24em] transition cursor-pointer hover:text-gold ${
         isActive ? "text-gold" : "text-cream/85"
       }`;
     if (/^https?:\/\//i.test(link.to)) {
-      return <a href={link.to} target="_blank" rel="noreferrer" className={mobile ? "font-display text-3xl text-cream" : "text-[0.68rem] uppercase tracking-[0.24em] text-cream/85 hover:text-gold"}>{link.label}</a>;
+      return <a href={link.to} target="_blank" rel="noreferrer" className={mobile ? "font-display text-2xl sm:text-3xl py-1.5 block text-cream hover:text-gold transition cursor-pointer" : "text-[0.68rem] uppercase tracking-[0.24em] text-cream/85 hover:text-gold transition cursor-pointer"}>{link.label}</a>;
     }
     return <NavLink to={link.to} className={className} end={link.to === "/"}>{link.label}</NavLink>;
   }
@@ -63,7 +63,7 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Link to="/" className="flex items-center gap-3.5 group" aria-label={`${company.name} home`}>
+        <Link to="/" className="flex items-center gap-3.5 group cursor-pointer" aria-label={`${company.name} home`}>
           <img
             src={company.logo || "/images/logo.png"}
             alt={`${company.name} Logo`}
@@ -76,13 +76,13 @@ export default function Navbar() {
         </nav>
         <Link
           to={content.footer?.enquiryUrl?.startsWith("/") && !content.footer.enquiryUrl.startsWith("//") ? content.footer.enquiryUrl : "/contact"}
-          className="hidden border border-gold/70 px-4 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-gold transition hover:bg-gold hover:text-ink lg:inline-flex"
+          className="hidden border border-gold/70 px-4 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-gold transition hover:bg-gold hover:text-ink lg:inline-flex cursor-pointer"
         >
           {content.footer?.enquiryLabel && content.footer.enquiryLabel !== "Enquire" ? content.footer.enquiryLabel : "Contact"}
         </Link>
         <button
           type="button"
-          className="lg:hidden"
+          className="lg:hidden p-2 -mr-2 text-cream hover:text-gold transition cursor-pointer"
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((value) => !value)}
@@ -92,11 +92,11 @@ export default function Navbar() {
         </button>
       </div>
       {open ? (
-        <div id="mobile-menu" className="border-t border-white/10 bg-ink px-5 py-8 lg:hidden">
-          <nav className="flex flex-col gap-5" aria-label="Mobile" onClick={() => setOpen(false)}>
+        <div id="mobile-menu" className="border-t border-white/10 bg-ink/98 backdrop-blur-md px-6 py-8 lg:hidden max-h-[calc(100vh-5rem)] overflow-y-auto shadow-2xl">
+          <nav className="flex flex-col gap-4" aria-label="Mobile" onClick={() => setOpen(false)}>
             {links.map((link) => <NavigationLink key={`${link.to}-${link.label}`} link={link} mobile />)}
-            <Link to="/contact" className="mt-4 text-[0.7rem] uppercase tracking-[0.24em] text-gold">
-              Contact
+            <Link to="/contact" className="mt-4 inline-block text-[0.72rem] uppercase tracking-[0.24em] text-gold border border-gold/40 px-4 py-2 text-center hover:bg-gold hover:text-ink transition cursor-pointer">
+              Contact Us
             </Link>
           </nav>
         </div>

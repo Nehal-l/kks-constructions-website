@@ -1,56 +1,129 @@
 @import "tailwindcss";
-
 @theme {
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "Outfit", system-ui, sans-serif;
-  --color-ink: #111111;
-  --color-ink-soft: #2a2724;
-  --color-gold: #c4a574;
-  --color-gold-deep: #9a7b4f;
-  --color-cream: #f7f3ec;
-  --color-sand: #e8dcc8;
-  --color-stone: #7c746b;
-  --color-line: rgba(196, 165, 116, 0.35);
+    --font-display: "Cormorant Garamond", Georgia, serif;
+    --font-sans: "Outfit", system-ui, sans-serif;
+    --color-ink: #111111;
+    --color-ink-soft: #2a2724;
+    --color-gold: #c4a574;
+    --color-gold-deep: #9a7b4f;
+    --color-cream: #f7f3ec;
+    --color-sand: #e8dcc8;
+    --color-stone: #7c746b;
+    --color-line: rgba(196, 165, 116, 0.35);
 }
 
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  background: #f7f3ec;
-  color: #111111;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  letter-spacing: 0.01em;
+    margin: 0;
+    min-width: 320px;
+    background: #f7f3ec;
+    color: #111111;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Ensure images, svgs, and videos never overflow their containers */
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 
+ * Pointer Cursors on all clickable elements across the entire public frontend and CMS.
+ * Every button, anchor, tab, select, clickable card and custom button gets a clear pointer cursor.
+ */
+button,
+a,
+[role="button"],
+[role="tab"],
+select,
+summary,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+label[for],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Disabled buttons and inputs indicate inactive state */
+button:disabled,
+button[disabled],
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Ensure smooth text breaking to prevent any long text, URL, or handle from blowing out container widths */
+p, span, h1, h2, h3, h4, h5, h6, a, dt, dd, li {
+  overflow-wrap: break-word;
+}
+
+/* Text selections & brand highlight */
 ::selection {
-  background: #c4a574;
-  color: #111111;
+    background: #c4a574;
+    color: #111111;
 }
 
+/* Accessible focus outlines with gold accent */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #c4a574;
-  outline-offset: 3px;
+    outline: 2px solid #c4a574;
+    outline-offset: 3px;
+}
+
+/* Custom refined scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f7f3ec;
+}
+::-webkit-scrollbar-thumb {
+  background: #c4a574;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9a7b4f;
 }
 
 .skip-link {
-  position: absolute;
-  left: 1rem;
-  top: -40px;
-  z-index: 80;
-  background: #111;
-  color: #f7f3ec;
-  padding: 0.5rem 0.85rem;
+    position: absolute;
+    left: 1rem;
+    top: -40px;
+    z-index: 80;
+    background: #111;
+    color: #f7f3ec;
+    padding: 0.5rem 0.85rem;
 }
 
 .skip-link:focus {
-  top: 1rem;
+    top: 1rem;
+}
+/* Media queries for fluid mobile layout alignment */
+@media (max-width: 640px) {
+  /* Prevent horizontal blowout on small screens (320px - 640px) */
+  html, body {
+    max-width: 100vw;
+  }
 }

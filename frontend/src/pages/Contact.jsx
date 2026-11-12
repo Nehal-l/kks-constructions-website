@@ -47,68 +47,70 @@ export default function Contact() {
 
       {/* Office Details & Private Desk Section */}
       {(showOfficeDetails || showPrivateDesk) && (
-        <section className={`mx-auto grid max-w-7xl gap-16 px-5 py-24 md:px-8 ${
+        <section className={`mx-auto grid max-w-7xl gap-10 lg:gap-16 px-5 py-14 sm:py-20 md:py-24 md:px-8 ${
           showOfficeDetails && showPrivateDesk ? "lg:grid-cols-2" : "grid-cols-1"
         }`}>
           {/* Office Details Column */}
           {showOfficeDetails && (
-            <div>
-              <span className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep">{contactCopy.eyebrow}</span>
-              <h2 className="mt-2 font-display text-4xl">{contactCopy.title}</h2>
-              <p className="mt-6 text-stone leading-relaxed text-base">
-                {company.contact?.addressLine}
-                <br />
-                {company.contact?.city}
-              </p>
+            <div className="flex flex-col justify-between">
+              <div>
+                <span className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep font-medium">{contactCopy.eyebrow}</span>
+                <h2 className="mt-2 font-display text-3xl sm:text-4xl text-ink leading-tight">{contactCopy.title}</h2>
+                <p className="mt-5 text-stone leading-relaxed text-sm sm:text-base">
+                  {company.contact?.addressLine}
+                  <br />
+                  {company.contact?.city}
+                </p>
 
-              <div className="mt-8 space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
-                    <Phone className="size-4" />
+                <div className="mt-8 space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
+                      <Phone className="size-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep font-medium">
+                        {contactCopy.phoneLabel || "Telephone"}
+                      </dt>
+                      <dd className="mt-1 font-medium text-ink">
+                        <a href={`tel:${cleanPhone}`} className="hover:text-gold transition cursor-pointer">
+                          {company.contact?.phone}
+                        </a>
+                      </dd>
+                    </div>
                   </div>
-                  <div>
-                    <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep">
-                      {contactCopy.phoneLabel || "Telephone"}
-                    </dt>
-                    <dd className="mt-1 font-medium text-ink">
-                      <a href={`tel:${cleanPhone}`} className="hover:text-gold transition">
-                        {company.contact?.phone}
-                      </a>
-                    </dd>
-                  </div>
-                </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
-                    <Mail className="size-4" />
+                  <div className="flex items-start gap-4">
+                    <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
+                      <Mail className="size-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep font-medium">
+                        {contactCopy.emailLabel || "Direct Email"}
+                      </dt>
+                      <dd className="mt-1 font-medium text-ink break-all">
+                        <a href={`mailto:${company.contact?.email}`} className="hover:text-gold transition cursor-pointer">
+                          {company.contact?.email}
+                        </a>
+                      </dd>
+                    </div>
                   </div>
-                  <div>
-                    <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep">
-                      {contactCopy.emailLabel || "Direct Email"}
-                    </dt>
-                    <dd className="mt-1 font-medium text-ink">
-                      <a href={`mailto:${company.contact?.email}`} className="hover:text-gold transition">
-                        {company.contact?.email}
-                      </a>
-                    </dd>
-                  </div>
-                </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
-                    <Clock className="size-4" />
-                  </div>
-                  <div>
-                    <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep">
-                      {contactCopy.hoursLabel || "Advisory Hours"}
-                    </dt>
-                    <dd className="mt-1 text-ink">{company.contact?.hours}</dd>
+                  <div className="flex items-start gap-4">
+                    <div className="flex size-10 items-center justify-center border border-gold/40 text-gold-deep shrink-0">
+                      <Clock className="size-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-[0.65rem] uppercase tracking-[0.24em] text-gold-deep font-medium">
+                        {contactCopy.hoursLabel || "Advisory Hours"}
+                      </dt>
+                      <dd className="mt-1 text-ink">{company.contact?.hours}</dd>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Quick WhatsApp / Direct Connect */}
-              <div className="mt-10 border border-sand bg-white/60 p-6">
+              <div className="mt-10 border border-sand bg-white/60 p-6 shadow-xs">
                 <h4 className="flex items-center gap-2 font-display text-xl text-ink">
                   <MessageSquare className="size-4 text-gold-deep" /> {contactCopy.whatsappTitle}
                 </h4>
@@ -119,7 +121,7 @@ export default function Contact() {
                   href={`https://wa.me/${cleanWhatsApp.replace("+", "")}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 bg-ink px-5 py-2.5 text-[0.65rem] uppercase tracking-[0.22em] text-cream hover:bg-gold hover:text-ink transition"
+                  className="mt-4 inline-flex items-center gap-2 bg-ink px-5 py-2.5 text-[0.65rem] uppercase tracking-[0.22em] text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-xs"
                 >
                   {contactCopy.whatsappButtonLabel}
                 </a>
@@ -129,7 +131,7 @@ export default function Contact() {
 
           {/* Private Advisory Desk Card Column */}
           {showPrivateDesk && (
-            <div>
+            <div className="w-full">
               <DirectContactSection title={privateDeskCopy.title} />
             </div>
           )}
@@ -138,21 +140,21 @@ export default function Contact() {
 
       {/* Frequently Asked Questions */}
       {showFaq && (
-        <section className="border-t border-sand bg-sand/25 py-20">
+        <section className="border-t border-sand bg-sand/25 py-14 sm:py-20">
           <div className="mx-auto max-w-5xl px-5 md:px-8">
             <div className="text-center">
-              <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep">{faqCopy.eyebrow}</p>
-              <h2 className="mt-2 font-display text-4xl">{faqCopy.title}</h2>
+              <p className="text-[0.68rem] uppercase tracking-[0.32em] text-gold-deep font-medium">{faqCopy.eyebrow}</p>
+              <h2 className="mt-2 font-display text-3xl sm:text-4xl text-ink">{faqCopy.title}</h2>
             </div>
 
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="mt-10 sm:mt-12 grid gap-5 sm:gap-6 md:grid-cols-2">
               {faqs.map((faq, index) => (
-                <div key={`${faq.q}-${index}`} className="border border-sand bg-cream p-6">
-                  <h3 className="flex items-start gap-3 font-display text-xl text-ink">
+                <div key={`${faq.q}-${index}`} className="border border-sand bg-cream p-5 sm:p-6 transition hover:border-gold/60 hover:shadow-xs">
+                  <h3 className="flex items-start gap-3 font-display text-lg sm:text-xl text-ink leading-snug">
                     <HelpCircle className="size-5 text-gold-deep shrink-0 mt-0.5" />
-                    {faq.q}
+                    <span className="min-w-0">{faq.q}</span>
                   </h3>
-                  <p className="mt-3 text-xs leading-relaxed text-stone pl-8">{faq.a}</p>
+                  <p className="mt-3 text-xs sm:text-sm leading-relaxed text-stone pl-8">{faq.a}</p>
                 </div>
               ))}
             </div>

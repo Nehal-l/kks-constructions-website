@@ -178,7 +178,7 @@ export default function AdminSecurity() {
           <button
             type="submit"
             disabled={loading || !allValid}
-            className="flex items-center justify-center gap-2 bg-ink px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition disabled:opacity-40"
+            className="flex items-center justify-center gap-2 bg-ink px-6 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-cream hover:bg-gold hover:text-ink transition cursor-pointer shadow-sm disabled:opacity-40"
           >
             <Lock className="size-4" />
             {loading ? "Updating Password..." : "Change Password"}

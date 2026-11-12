@@ -14,7 +14,7 @@ export default function ProjectCard({ project }) {
   };
   return (
     <article className="group">
-      <Link to={`/projects/${project.slug}`} className="block">
+      <Link to={`/projects/${project.slug}`} className="block cursor-pointer">
         <div className="relative overflow-hidden bg-ink aspect-[4/5] md:aspect-[5/6]">
           <img
             src={getMediaUrl(project.cover)}
@@ -22,23 +22,23 @@ export default function ProjectCard({ project }) {
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
-          <span className="absolute left-5 top-5 border border-gold/50 bg-ink/40 px-3 py-1 text-[0.62rem] uppercase tracking-[0.22em] text-cream backdrop-blur-sm">
+          <span className="absolute left-4 sm:left-5 top-4 sm:top-5 border border-gold/50 bg-ink/40 px-3 py-1 text-[0.62rem] uppercase tracking-[0.22em] text-cream backdrop-blur-sm">
             {statusLabels[project.status] || project.status}
           </span>
-          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-            <p className="text-[0.7rem] uppercase tracking-[0.22em] text-gold">
+          <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6">
+            <p className="text-[0.68rem] sm:text-[0.7rem] uppercase tracking-[0.22em] text-gold font-medium">
               {project.location}
             </p>
-            <div className="mt-2 flex items-end justify-between gap-3">
-              <h3 className="font-display text-2xl md:text-3xl text-cream leading-tight">
+            <div className="mt-1 sm:mt-2 flex items-end justify-between gap-3">
+              <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-cream leading-tight">
                 {project.name}
               </h3>
               <ArrowUpRight
-                className="mb-1 size-5 text-gold transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                className="mb-1 size-5 text-gold transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 shrink-0"
                 aria-hidden
               />
             </div>
-            <p className="mt-2 text-sm text-sand/80 line-clamp-2">{project.summary}</p>
+            <p className="mt-2 text-xs sm:text-sm text-sand/80 line-clamp-2 font-light">{project.summary}</p>
           </div>
         </div>
       </Link>
