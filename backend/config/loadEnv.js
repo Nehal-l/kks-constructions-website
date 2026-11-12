@@ -28,7 +28,7 @@ export function loadEnv() {
     dotenv.config({ path: resolvedPath });
     envLoaded = true;
     const rel = path.relative(process.cwd(), resolvedPath);
-    console.log(` [env] Loaded environment configuration from: ${rel || path.basename(resolvedPath)}`);
+    console.log(`✅ [env] Loaded environment configuration from: ${rel || path.basename(resolvedPath)}`);
   } else {
     dotenv.config();
     envLoaded = true;
@@ -46,6 +46,8 @@ export function loadEnv() {
     "BACKEND_URL",
     "FRONTEND_URL",
     "CLIENT_ORIGIN",
+    "CLIENT_URL",
+    "CORS_ORIGIN",
     "SESSION_SECRET",
     "OWNER_USERNAME",
     "OWNER_EMAIL",
@@ -61,15 +63,18 @@ export function loadEnv() {
     }
   }
 
-  // Cross-populate frontend origin variables for maximum compatibility
-  if (!process.env.CLIENT_ORIGIN && process.env.FRONTEND_URL) {
-    process.env.CLIENT_ORIGIN = process.env.FRONTEND_URL;
-  }
-  if (!process.env.FRONTEND_URL && process.env.CLIENT_ORIGIN) {
-    process.env.FRONTEND_URL = process.env.CLIENT_ORIGIN;
+  // Cross-populate frontend origin variables for maximum compatibility across deployment environments
+  const resolvedClientOrigin =
+    process.env.CLIENT_ORIGIN ||
+    process.env.FRONTEND_URL ||
+    process.env.CLIENT_URL ||
+    process.env.CORS_ORIGIN;
+
+  if (resolvedClientOrigin) {
+    if (!process.env.CLIENT_ORIGIN) process.env.CLIENT_ORIGIN = resolvedClientOrigin;
+    if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = resolvedClientOrigin;
   }
 }
 
 // Auto-execute on import
 loadEnv();
-

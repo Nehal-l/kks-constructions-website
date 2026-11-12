@@ -5,6 +5,20 @@ const SESSION_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const unsafeMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const developmentSessionSecret = crypto.randomBytes(32).toString("hex");
 
+function normalizeOrigin(val) {
+  if (!val || typeof val !== "string") return "";
+  let trimmed = val.trim();
+  if (!trimmed) return "";
+  if (!/^https?:\/\//i.test(trimmed)) {
+    trimmed = `https://${trimmed}`;
+  }
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed.replace(/\/+$/, "");
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Owner credential lookup — reads directly from environment variables.
 // No database queries are made for authentication.
@@ -19,23 +33,25 @@ export function getOwnerFromEnv() {
 export function requireTrustedOrigin(req, res, next) {
   if (!unsafeMethods.has(req.method) || !req.get("Origin")) return next();
   const requestOrigin = req.get("Origin");
+
+  if (process.env.CORS_ORIGIN === "*") return next();
+
   const rawOrigins = [
     process.env.CLIENT_ORIGIN,
     process.env.FRONTEND_URL,
+    process.env.CLIENT_URL,
+    process.env.CORS_ORIGIN,
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
   ]
     .filter(Boolean)
     .join(",");
 
   const allowedOrigins = rawOrigins
     .split(",")
-    .map((origin) => {
-      try {
-        return new URL(origin.trim()).origin;
-      } catch {
-        return origin.trim().replace(/\/+$/, "");
-      }
-    })
+    .map(normalizeOrigin)
     .filter(Boolean);
 
   let isLocalDevelopmentOrigin = false;
@@ -49,12 +65,7 @@ export function requireTrustedOrigin(req, res, next) {
     }
   }
 
-  let normalizedRequestOrigin = "";
-  try {
-    normalizedRequestOrigin = new URL(requestOrigin).origin;
-  } catch {
-    normalizedRequestOrigin = requestOrigin.replace(/\/+$/, "");
-  }
+  const normalizedRequestOrigin = normalizeOrigin(requestOrigin);
 
   if (!allowedOrigins.includes(normalizedRequestOrigin) && !isLocalDevelopmentOrigin) {
     return res.status(403).json({ error: "Request origin is not allowed." });

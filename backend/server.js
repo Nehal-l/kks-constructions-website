@@ -14,11 +14,28 @@ import adminRoutes from "./routes/adminRoutes.js";
 const app = express();
 const port = Number(process.env.PORT) || 5000;
 
-// CORS configuration supporting single or comma-separated origins with credentials
-// Reads CLIENT_ORIGIN and FRONTEND_URL from environment
+// Helper to reliably normalize any URL into standard origin format (e.g. "https://example.com")
+export function normalizeOrigin(val) {
+  if (!val || typeof val !== "string") return "";
+  let trimmed = val.trim();
+  if (!trimmed) return "";
+  if (!/^https?:\/\//i.test(trimmed)) {
+    trimmed = `https://${trimmed}`;
+  }
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed.replace(/\/+$/, "");
+  }
+}
+
+// CORS configuration: reads frontend origins from CLIENT_ORIGIN, FRONTEND_URL, CLIENT_URL, or CORS_ORIGIN
+// Supports single or comma-separated origins, with or without trailing slashes.
 const rawOrigins = [
   process.env.CLIENT_ORIGIN,
   process.env.FRONTEND_URL,
+  process.env.CLIENT_URL,
+  process.env.CORS_ORIGIN,
 ]
   .filter(Boolean)
   .join(",");
@@ -27,24 +44,29 @@ const defaultOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
 ];
 
-const configuredOrigins = Array.from(
-  new Set(
-    (rawOrigins || defaultOrigins.join(","))
-      .split(",")
-      .map((o) => {
-        try {
-          return new URL(o.trim()).origin;
-        } catch {
-          return o.trim().replace(/\/+$/, "");
-        }
-      })
-      .filter(Boolean)
-  )
+const envOrigins = (rawOrigins || "")
+  .split(",")
+  .map(normalizeOrigin)
+  .filter(Boolean);
+
+export const configuredOrigins = Array.from(
+  new Set([
+    ...defaultOrigins.map(normalizeOrigin),
+    ...envOrigins,
+  ])
 );
 
 if (process.env.NODE_ENV === "production") {
+  // Ensure CLIENT_ORIGIN is filled from FRONTEND_URL or CLIENT_URL if not directly set
+  if (!process.env.CLIENT_ORIGIN && (process.env.FRONTEND_URL || process.env.CLIENT_URL || process.env.CORS_ORIGIN)) {
+    process.env.CLIENT_ORIGIN = process.env.FRONTEND_URL || process.env.CLIENT_URL || process.env.CORS_ORIGIN;
+  }
+
   const requiredProductionSettings = [
     "MONGODB_URI",
     "CLOUDINARY_CLOUD_NAME",
@@ -58,20 +80,19 @@ if (process.env.NODE_ENV === "production") {
   if (missing.length) {
     throw new Error(`Missing required production configuration: ${missing.join(", ")}`);
   }
-  // Note: OWNER_INITIAL_PASSWORD is validated at login time against the env var directly.
   if (process.env.SESSION_SECRET.length < 32) {
     throw new Error("Production SESSION_SECRET must be at least 32 characters.");
   }
-  const invalidOrigin = configuredOrigins.some((origin) => {
+  const invalidOrigin = envOrigins.some((origin) => {
     try {
       const parsed = new URL(origin);
-      return parsed.protocol !== "https:" || parsed.origin !== origin;
+      return parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1";
     } catch {
       return true;
     }
   });
   if (invalidOrigin) {
-    throw new Error("Every production CLIENT_ORIGIN must be an exact HTTPS origin.");
+    throw new Error("Every production client origin in .env must be a valid HTTPS or localhost origin.");
   }
 }
 
@@ -86,31 +107,42 @@ app.use((req, res, next) => {
   return next();
 });
 
-app.use(
-  cors({
-    origin: (requestOrigin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, or same-origin)
-      if (!requestOrigin) return callback(null, true);
-      let normalizedOrigin = "";
-      try {
-        normalizedOrigin = new URL(requestOrigin).origin;
-      } catch {
-        normalizedOrigin = requestOrigin.replace(/\/+$/, "");
-      }
+const corsOptions = {
+  origin: (requestOrigin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, server-to-server, or same-origin)
+    if (!requestOrigin) return callback(null, true);
 
-      if (
-        configuredOrigins.includes(normalizedOrigin) ||
-        process.env.NODE_ENV !== "production"
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, false);
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-  })
-);
+    const normalizedReqOrigin = normalizeOrigin(requestOrigin);
+
+    if (
+      process.env.CORS_ORIGIN === "*" ||
+      configuredOrigins.includes(normalizedReqOrigin) ||
+      process.env.NODE_ENV !== "production"
+    ) {
+      return callback(null, true);
+    }
+    console.warn(`⚠️ [CORS Blocked] Origin: "${requestOrigin}" (normalized: "${normalizedReqOrigin}"). Allowed origins:`, configuredOrigins);
+    return callback(new Error(`Origin ${requestOrigin} is not allowed by CORS.`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Cache-Control",
+    "Pragma",
+    "Expires",
+    "Origin",
+    "If-Modified-Since",
+    "X-Forwarded-Proto",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  maxAge: 86400, // 24 hours preflight cache
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));

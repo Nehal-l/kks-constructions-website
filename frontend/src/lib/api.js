@@ -1,24 +1,43 @@
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_BACKEND_URL ||
-  ""
-).replace(/\/+$/, "");
-const apiUrl = (path) => `${API_BASE_URL}${path}`;
+// Cleanly resolve the backend base URL from environment variables
+function resolveBackendBase() {
+  const envUrl = (
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_BACKEND_URL ||
+    ""
+  ).trim();
+
+  if (!envUrl) {
+    // If running in development on localhost, default to local backend
+    if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+      return "http://localhost:5000";
+    }
+    // In production same-origin deployment, empty string uses relative paths
+    return "";
+  }
+
+  // Remove trailing slashes
+  let cleaned = envUrl.replace(/\/+$/, "");
+  // If the user appended /api to the base URL in .env, strip it so apiUrl() doesn't duplicate it
+  if (cleaned.endsWith("/api")) {
+    cleaned = cleaned.slice(0, -4).replace(/\/+$/, "");
+  }
+  return cleaned;
+}
+
+const BACKEND_BASE_URL = resolveBackendBase();
+
+export function apiUrl(path = "") {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${BACKEND_BASE_URL}${normalizedPath}`;
+}
 
 // Resolves local upload paths to the backend origin so images work regardless
-// of which Vite dev-server port is active or whether the proxy has been applied.
-// In production, set VITE_API_URL to the backend HTTPS origin.
-const UPLOADS_BASE = API_BASE_URL || (
-  typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : ""
-);
-
+// of which Vite dev-server port is active or whether proxy/custom domain is used.
 export function getMediaUrl(url) {
   if (!url || typeof url !== "string") return "";
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) return url;
   if (url.startsWith("/uploads/")) {
-    return UPLOADS_BASE ? `${UPLOADS_BASE}${url}` : url;
+    return BACKEND_BASE_URL ? `${BACKEND_BASE_URL}${url}` : url;
   }
   return url;
 }
@@ -30,10 +49,6 @@ export async function fetchSiteContent({ refresh = false } = {}) {
     apiUrl(`/api/content?_t=${Date.now()}`),
     {
       cache: "no-store",
-      headers: {
-        Pragma: "no-cache",
-        "Cache-Control": "no-cache",
-      },
     }
   );
   if (!response.ok) {
@@ -51,7 +66,6 @@ export async function fetchProjects(status = "all", type = "all") {
 
   const response = await fetch(apiUrl(`/api/projects${query}`), {
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) {
     throw new Error("Unable to load projects.");
@@ -62,7 +76,6 @@ export async function fetchProjects(status = "all", type = "all") {
 export async function fetchProject(slug) {
   const response = await fetch(apiUrl(`/api/projects/${encodeURIComponent(slug)}?_t=${Date.now()}`), {
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (response.status === 404) {
     return null;
@@ -76,7 +89,6 @@ export async function fetchProject(slug) {
 export async function fetchTestimonials() {
   const response = await fetch(apiUrl(`/api/testimonials?_t=${Date.now()}`), {
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) {
     throw new Error("Unable to load testimonials.");
@@ -153,7 +165,6 @@ export async function fetchAdminOverview() {
   const response = await fetch(apiUrl(`/api/admin/overview?_t=${Date.now()}`), {
     credentials: "include",
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load admin overview.");
   return response.json();
@@ -163,7 +174,6 @@ export async function fetchAdminContent() {
   const response = await fetch(apiUrl(`/api/admin/content?_t=${Date.now()}`), {
     credentials: "include",
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load editable content.");
   return response.json();
@@ -185,7 +195,6 @@ export async function fetchAdminProjects() {
   const response = await fetch(apiUrl(`/api/admin/projects?_t=${Date.now()}`), {
     credentials: "include",
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load projects.");
   return response.json();
