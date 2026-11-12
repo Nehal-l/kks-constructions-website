@@ -27,8 +27,14 @@ export function getMediaUrl(url) {
 
 export async function fetchSiteContent({ refresh = false } = {}) {
   const response = await fetch(
-    apiUrl(`/api/content${refresh ? `?refresh=${Date.now()}` : ""}`),
-    { cache: "no-store" }
+    apiUrl(`/api/content?_t=${Date.now()}`),
+    {
+      cache: "no-store",
+      headers: {
+        Pragma: "no-cache",
+        "Cache-Control": "no-cache",
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Unable to load site content.");
@@ -40,9 +46,13 @@ export async function fetchProjects(status = "all", type = "all") {
   const params = new URLSearchParams();
   if (status && status !== "all") params.set("status", status);
   if (type && type !== "all") params.set("type", type);
-  const query = params.toString() ? `?${params.toString()}` : "";
+  params.set("_t", Date.now());
+  const query = `?${params.toString()}`;
 
-  const response = await fetch(apiUrl(`/api/projects${query}`), { cache: "no-store" });
+  const response = await fetch(apiUrl(`/api/projects${query}`), {
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+  });
   if (!response.ok) {
     throw new Error("Unable to load projects.");
   }
@@ -50,7 +60,10 @@ export async function fetchProjects(status = "all", type = "all") {
 }
 
 export async function fetchProject(slug) {
-  const response = await fetch(apiUrl(`/api/projects/${encodeURIComponent(slug)}`), { cache: "no-store" });
+  const response = await fetch(apiUrl(`/api/projects/${encodeURIComponent(slug)}?_t=${Date.now()}`), {
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+  });
   if (response.status === 404) {
     return null;
   }
@@ -61,7 +74,10 @@ export async function fetchProject(slug) {
 }
 
 export async function fetchTestimonials() {
-  const response = await fetch(apiUrl("/api/testimonials"), { cache: "no-store" });
+  const response = await fetch(apiUrl(`/api/testimonials?_t=${Date.now()}`), {
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+  });
   if (!response.ok) {
     throw new Error("Unable to load testimonials.");
   }
@@ -134,16 +150,20 @@ export async function changeAdminPassword(currentPassword, newPassword, confirmP
 // --- ADMIN CMS METHODS ---
 
 export async function fetchAdminOverview() {
-  const response = await fetch(apiUrl("/api/admin/overview"), {
+  const response = await fetch(apiUrl(`/api/admin/overview?_t=${Date.now()}`), {
     credentials: "include",
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load admin overview.");
   return response.json();
 }
 
 export async function fetchAdminContent() {
-  const response = await fetch(apiUrl("/api/admin/content"), {
+  const response = await fetch(apiUrl(`/api/admin/content?_t=${Date.now()}`), {
     credentials: "include",
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load editable content.");
   return response.json();
@@ -162,8 +182,10 @@ export async function updateAdminContent(payload, { publish = true } = {}) {
 }
 
 export async function fetchAdminProjects() {
-  const response = await fetch(apiUrl("/api/admin/projects"), {
+  const response = await fetch(apiUrl(`/api/admin/projects?_t=${Date.now()}`), {
     credentials: "include",
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
   });
   if (!response.ok) throw new Error("Failed to load projects.");
   return response.json();

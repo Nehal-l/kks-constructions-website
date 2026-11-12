@@ -76,6 +76,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.set("trust proxy", 1);
+app.set("etag", false);
+
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === "production") {
     if (!req.secure) return res.status(426).json({ error: "HTTPS is required." });
@@ -152,8 +154,8 @@ async function startServer() {
   });
 
   app.listen(port, () => {
-    console.log(` KKS Constructions API server running on port ${port}`);
-    console.log(` Owner bootstrap email: ${process.env.OWNER_EMAIL || "constructionskks@gmail.com"}`);
+    console.log(`✅ KKS Constructions API server running on port ${port}`);
+    console.log(`👤 Owner bootstrap email: ${process.env.OWNER_EMAIL || "constructionskks@gmail.com"}`);
   });
 }
 

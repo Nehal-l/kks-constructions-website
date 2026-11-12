@@ -202,16 +202,15 @@ export async function getSiteContent(includeDraft = false) {
       throw new Error("MongoDB Atlas is configured but not connected. Unable to load site content.");
     }
     try {
-      const doc = await SiteContent.findOne({ key: "main_content" });
+      const doc = await SiteContent.findOne({ key: "main_content" }).lean();
       if (doc) {
-        const stored = doc.toObject();
-        const publishedContent = withoutStorageFields(stored);
-        return includeDraft && stored.draftContent
-          ? deepMergeContent(publishedContent, stored.draftContent)
+        const publishedContent = withoutStorageFields(doc);
+        return includeDraft && doc.draftContent
+          ? deepMergeContent(publishedContent, doc.draftContent)
           : publishedContent;
       }
     } catch (err) {
-      console.error("❌ Failed to query site content from MongoDB:", err.message);
+      console.error("Failed to query site content from MongoDB:", err.message);
       throw new Error(`Database query failed for site content: ${err.message}`);
     }
   }
@@ -227,7 +226,7 @@ export async function updateSiteContent(data, publish = true) {
     }
     try {
       if (!publish) {
-        const existing = await SiteContent.findOne({ key: "main_content" });
+        const existing = await SiteContent.findOne({ key: "main_content" }).lean();
         const mergedDraft = deepMergeContent(existing?.draftContent, data);
         await SiteContent.findOneAndUpdate(
           { key: "main_content" },
@@ -238,32 +237,49 @@ export async function updateSiteContent(data, publish = true) {
         saveLocalStore();
         return getSiteContent(true);
       }
-      const existing = await SiteContent.findOne({ key: "main_content" });
-      const publishedBase = existing ? withoutStorageFields(existing.toObject()) : {};
+
+      const existing = await SiteContent.findOne({ key: "main_content" }).lean();
+      const publishedBase = existing ? withoutStorageFields(existing) : {};
       const mergedPublish = deepMergeContent(
         deepMergeContent(publishedBase, existing?.draftContent),
         data
       );
+
       const updatePayload = {
-        ...flattenToDottedSet(mergedPublish),
-        sectionVisibility: mergedPublish.sectionVisibility || {},
-        pageVisibility: mergedPublish.pageVisibility || {},
-        sections: mergedPublish.sections || [],
+        company: mergedPublish.company || {},
+        values: mergedPublish.values || [],
+        highlights: mergedPublish.highlights || [],
+        pageHeroes: mergedPublish.pageHeroes || {},
+        sections: data.sections !== undefined ? data.sections : (mergedPublish.sections || []),
+        navigationItems: data.navigationItems !== undefined ? data.navigationItems : (mergedPublish.navigationItems || []),
+        pageVisibility: data.pageVisibility !== undefined ? data.pageVisibility : (mergedPublish.pageVisibility || {}),
+        sectionVisibility: data.sectionVisibility !== undefined ? data.sectionVisibility : (mergedPublish.sectionVisibility || {}),
+        standards: data.standards !== undefined ? data.standards : (mergedPublish.standards || []),
+        milestones: data.milestones !== undefined ? data.milestones : (mergedPublish.milestones || []),
+        faqs: data.faqs !== undefined ? data.faqs : (mergedPublish.faqs || []),
+        pressMentions: data.pressMentions !== undefined ? data.pressMentions : (mergedPublish.pressMentions || []),
+        homeIntro: mergedPublish.homeIntro || {},
+        pageCopy: mergedPublish.pageCopy || {},
+        footer: mergedPublish.footer || {},
+        isPublished: true,
       };
+
       const updated = await SiteContent.findOneAndUpdate(
         { key: "main_content" },
-        { $set: updatePayload, $unset: { draftContent: 1 } },
+        {
+          $set: updatePayload,
+          $unset: { draftContent: 1 },
+        },
         { new: true, upsert: true, setDefaultsOnInsert: true }
-      );
-      localStore.content = withoutStorageFields(updated.toObject());
-      localStore.content.sectionVisibility = mergedPublish.sectionVisibility || {};
-      localStore.content.pageVisibility = mergedPublish.pageVisibility || {};
-      localStore.content.sections = mergedPublish.sections || [];
+      ).lean();
+
+      const savedResult = withoutStorageFields(updated || updatePayload);
+      localStore.content = savedResult;
       localStore.draftContent = null;
       saveLocalStore();
       return getSiteContent();
     } catch (err) {
-      console.error("❌ Failed to update site content in MongoDB:", err.message);
+      console.error("Failed to update site content in MongoDB:", err.message);
       throw new Error(`Database update failed for site content: ${err.message}`);
     }
   }
@@ -274,22 +290,20 @@ export async function updateSiteContent(data, publish = true) {
     saveLocalStore();
     return getSiteContent(true);
   }
-  localStore.content = deepMergeContent(
+  const mergedPublish = deepMergeContent(
     deepMergeContent(localStore.content, localStore.draftContent),
     data
   );
-  if (data.sectionVisibility !== undefined) {
-    localStore.content.sectionVisibility = { ...(localStore.content.sectionVisibility || {}), ...data.sectionVisibility };
-  }
-  if (data.pageVisibility !== undefined) {
-    localStore.content.pageVisibility = { ...(localStore.content.pageVisibility || {}), ...data.pageVisibility };
-  }
-  if (data.sections !== undefined) {
-    localStore.content.sections = data.sections;
-  }
+  localStore.content = {
+    ...mergedPublish,
+    sectionVisibility: data.sectionVisibility !== undefined ? data.sectionVisibility : (mergedPublish.sectionVisibility || {}),
+    pageVisibility: data.pageVisibility !== undefined ? data.pageVisibility : (mergedPublish.pageVisibility || {}),
+    sections: data.sections !== undefined ? data.sections : (mergedPublish.sections || []),
+    isPublished: true,
+  };
   localStore.draftContent = null;
   saveLocalStore();
-  return localStore.content;
+  return getSiteContent();
 }
 
 export async function getProjects(includeUnpublished = false) {

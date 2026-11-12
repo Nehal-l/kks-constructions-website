@@ -24,7 +24,13 @@ export function ContentProvider({ children }) {
     pageCopy: pageContentDefaults.pageCopy,
     sectionVisibility: {},
     pageVisibility: {},
+    navigationItems: [],
+    standards: pageContentDefaults.standards || [],
+    milestones: pageContentDefaults.milestones || [],
+    faqs: pageContentDefaults.faqs || [],
+    pressMentions: pageContentDefaults.pressMentions || [],
     homeIntro: pageContentDefaults.homeIntro,
+    footer: {},
   });
 
   const [loading, setLoading] = useState(true);
@@ -35,49 +41,27 @@ export function ContentProvider({ children }) {
     try {
       const data = await fetchSiteContent(options);
       if (data?.ok && data.content) {
-        setContent((prev) => ({
-          ...prev,
-          ...data.content,
-          sections: data.content.sections || [],
-          sectionVisibility: {
-            ...(prev.sectionVisibility || {}),
-            ...(data.content.sectionVisibility || {}),
-          },
-          pageVisibility: {
-            ...(prev.pageVisibility || {}),
-            ...(data.content.pageVisibility || {}),
-          },
-          company: {
-            ...prev.company,
-            ...data.content.company,
-            contact: {
-              ...prev.company.contact,
-              ...(data.content.company?.contact || {}),
-            },
-            social: {
-              ...prev.company.social,
-              ...(data.content.company?.social || {}),
-            },
-            disclaimers: {
-              ...prev.company.disclaimers,
-              ...(data.content.company?.disclaimers || {}),
-            },
-          },
-          pageHeroes: {
-            ...prev.pageHeroes,
-            ...(data.content.pageHeroes || {}),
-            home: {
-              ...prev.pageHeroes?.home,
-              ...(data.content.pageHeroes?.home || {}),
-            },
-          },
+        const sc = data.content;
+        setContent({
+          company: mergeContentDefaults(defaultCompany, sc.company),
+          values: Array.isArray(sc.company?.values) ? sc.company.values : (defaultCompany.values || []),
+          highlights: Array.isArray(sc.company?.highlights) ? sc.company.highlights : (defaultCompany.highlights || []),
+          pageHeroes: mergeContentDefaults(pageHeroDefaults, sc.pageHeroes),
+          sections: Array.isArray(sc.sections) ? sc.sections : [],
+          sectionVisibility: sc.sectionVisibility && typeof sc.sectionVisibility === "object" ? sc.sectionVisibility : {},
+          pageVisibility: sc.pageVisibility && typeof sc.pageVisibility === "object" ? sc.pageVisibility : {},
+          navigationItems: Array.isArray(sc.navigationItems) ? sc.navigationItems : [],
+          standards: Array.isArray(sc.standards) ? sc.standards : (pageContentDefaults.standards || []),
+          milestones: Array.isArray(sc.milestones) ? sc.milestones : (pageContentDefaults.milestones || []),
+          faqs: Array.isArray(sc.faqs) ? sc.faqs : (pageContentDefaults.faqs || []),
+          pressMentions: Array.isArray(sc.pressMentions) ? sc.pressMentions : (pageContentDefaults.pressMentions || []),
           homeIntro: {
             ...pageContentDefaults.homeIntro,
-            ...(prev.homeIntro || {}),
-            ...(data.content.homeIntro || {}),
+            ...(sc.homeIntro || {}),
           },
-          pageCopy: mergeContentDefaults(pageContentDefaults.pageCopy, data.content.pageCopy),
-        }));
+          pageCopy: mergeContentDefaults(pageContentDefaults.pageCopy, sc.pageCopy),
+          footer: sc.footer || {},
+        });
         setError("");
         refreshed = true;
       } else {

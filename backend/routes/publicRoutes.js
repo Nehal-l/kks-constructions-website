@@ -14,6 +14,17 @@ import { statusLabels } from "../../data/content.js";
 
 const router = express.Router();
 
+// Strict cache-busting headers for all public routes to ensure visitors always receive fresh published content
+router.use((_req, res, next) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+    "Surrogate-Control": "no-store",
+  });
+  next();
+});
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^[0-9+\-\s()]{8,20}$/;
 
@@ -55,7 +66,6 @@ router.get("/health", async (_req, res) => {
 router.get("/content", async (_req, res) => {
   try {
     const content = await getSiteContent();
-    res.set("Cache-Control", "no-store");
     const publishedContent = {
       ...content,
       sections: (Array.isArray(content?.sections) ? content.sections : []).filter(
@@ -75,7 +85,6 @@ router.get("/content", async (_req, res) => {
 // GET /api/projects
 router.get("/projects", async (req, res) => {
   try {
-    res.set("Cache-Control", "no-store");
     const status = field(req.query.status).toLowerCase();
     const type = field(req.query.type).toLowerCase();
 
@@ -104,7 +113,6 @@ router.get("/projects", async (req, res) => {
 // GET /api/projects/:slug
 router.get("/projects/:slug", async (req, res) => {
   try {
-    res.set("Cache-Control", "no-store");
     const project = await getProjectBySlug(req.params.slug, false);
     if (!project) {
       return res.status(404).json({ error: "Project not found." });
@@ -123,7 +131,6 @@ router.get("/projects/:slug", async (req, res) => {
 // GET /api/testimonials
 router.get("/testimonials", async (_req, res) => {
   try {
-    res.set("Cache-Control", "no-store");
     const list = await getTestimonials(false); // Only published testimonials
     res.json({
       ok: true,
